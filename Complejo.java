@@ -12,7 +12,7 @@ public class Complejo{
 		Complejo a=new Complejo();
 		// Complejo c=new Complejo(1.0,7.0,3.0,2.0); 
 
-		a.printValues();
+		a.imprimir();
 		// c.printValues();
 		a.suma();
 		a.resta();
@@ -40,10 +40,10 @@ public class Complejo{
 	}
 
 	public Complejo(double A, double Bi, double C, double Di){
-		setValues(A,Bi,C,Di); //
+		establecer(A,Bi,C,Di); //
 	}
 
-	public void setValues(double A, double Bi, double C, double Di){ //establecer() <--
+	public void establecer(double A, double Bi, double C, double Di){ //establecer() <--
 		this.A=A;
 		this.Bi=Bi;
 		this.C=C;
@@ -58,7 +58,7 @@ public class Complejo{
 		return this.Bi;
 	}
 	
-	public void printValues(){ // imprimir() <--
+	public void imprimir(){ // imprimir() <--
 		System.out.println("a = " + this.A + " + " + this.Bi + "i");
 		System.out.println("c = " + this.C + " + " + this.Di + "i");
 	}
@@ -66,14 +66,6 @@ public class Complejo{
 //Final de declarando la existencia del objeto y todo lo que debe de tener.
 
 /* Pendiente... 
-
-	public static void establecer(){
-		
-	}
-
-	public static void imprimir(){
-	
-	}
 	
 	public static void agregar(){
 	
@@ -129,11 +121,11 @@ public class Complejo{
 	}
 	
 	public void conjugado(){
-		if(this.Bi <= 0){
-			System.out.println("Conjugado de a es ¬a = " + this.A + "-" + this.Bi);
+		if(this.Bi > 0){
+			System.out.println("Conjugado de a es ¬a = " + this.A + "-" + this.Bi + "i");
 		}
 		else{ 
-			System.out.println("Conjugado de ¬a = " + this.A + " + " + this.Bi*-1);
+			System.out.println("Conjugado de ¬a = " + this.A + " + " + (this.Bi*-1) + "i");
 		}
 	}
 }
