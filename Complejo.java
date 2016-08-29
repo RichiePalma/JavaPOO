@@ -9,16 +9,17 @@ import javax.swing.*;
 public class Complejo{
 
 	public static void main(String[] args){
-		Complejo a=new Complejo();
-		// Complejo c=new Complejo(1.0,7.0,3.0,2.0); 
+		Complejo a=new Complejo(1.0,7.0,3.0,2.0);
+		Complejo c=new Complejo(); 
 
 		a.imprimir();
-		// c.printValues();
 		a.suma();
 		a.resta();
 		a.multiplicacionAC();
 		a.multiplicacionXC();
 		a.conjugado();
+
+		c.agregar();
 	}
 
 // Comienzo de declarando la existencia del objeto y todo lo que debe de tener.
@@ -34,9 +35,8 @@ public class Complejo{
 		Di; //Imaginaria
 
 	public Complejo(){
-		this(3.0,2.0,1.0,7.0);
-		A=3.0;
-		Bi=2.0;
+		this(0,0,0,0);
+
 	}
 
 	public Complejo(double A, double Bi, double C, double Di){
@@ -126,6 +126,51 @@ public class Complejo{
 		}
 		else{ 
 			System.out.println("Conjugado de ¬a = " + this.A + " + " + (this.Bi*-1) + "i");
+		}
+	}
+	
+	public void agregar(){
+		String incorporar = JOptionPane.showInputDialog("¿Te gustaria sumar tus propios numero complejo? Si / No");
+		while(incorporar.equalsIgnoreCase("si")){
+			Double realA = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte real del 1er numero complejo? "));
+			Double imaginarioA = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte imaginaria de 1er numero complejo? "));
+			Double realB = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte real de 2ndo numero complejo? "));
+			Double imaginarioB = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte imaginaria de 2ndo numero complejo? "));
+
+			this.A=realA;
+			this.Bi=imaginarioA;
+			this.C=realB;
+			this.Di=imaginarioB;
+
+//-----------------------------Suma-----------------------------
+
+			Double SumarReales = this.A + this.C;
+			Double SumarImaginarios =this.Bi + this.Di;
+			if(SumarImaginarios >= 0){ 
+				System.out.println("Resultado de la suma de tus valores es: " + SumarReales + " + " + SumarImaginarios + "i" );
+			}
+			else{		
+				System.out.println("Resultado de la suma de tus valores es: " + SumarReales + SumarImaginarios + "i" );
+			}
+
+
+
+			String continuar = JOptionPane.showInputDialog("¿Te gustaria sumarle al resultado otro numero complejo? Si / No");
+			if(continuar.equalsIgnoreCase("si")){
+				Double siguienteReal = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte real del siguiente numero complejo? "));
+				Double siguienteImaginario = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte imaginaria del siguiente numero complejo? "));
+				Double SumarSiguienteReal = SumarReales + siguienteReal;
+				Double SumarSiguienteImaginario = SumarImaginarios + siguienteImaginario;	
+				if(SumarSiguienteImaginario >= 0){ 
+					System.out.println("Resultado de la suma de tus valores es: " + SumarSiguienteReal + " + " + SumarSiguienteImaginario + "i" );
+				}
+				else{		
+				System.out.println("Resultado de la suma de tus valores es: " + SumarSiguienteReal + SumarSiguienteImaginario + "i" );
+				}
+			}
+			else{
+				break;
+			}
 		}
 	}
 }
