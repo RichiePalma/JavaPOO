@@ -1,0 +1,57 @@
+Paradigma de Programación Orientado a Objetos
+===
+
+-Busca mantenimiento de software y reutilización de software.
+
+Un objeto es un ente, entidades, sujetos o cosas que encontramos en el dominio del problema de nuestra realidad. Estos tienen 2 características:
+	- Estado (Atributos): Aquellas cosas o características que distingan que tipo de clase es: Ejemplo: el apuntador laser tiene color de punto rojo  con ciertas
+	                      medidas, tiene una marca y rango.	¿Que cosas tiene un objeto?
+	- Comportamiento (Métodos): Como dice el nombre, es como se comporta por ejemplo el lasér tiene diferentes operaciónes que al presionar el botón sale el laser,
+	                            etc. ¿Que cosas puede hacer un objeto?
+
+ ¿Cuales son las carácteristicas de una clase carro? 
+	-Numero de puertas	-Marca		-Numero de llantas	-Numero de asientos	-Automatico/Standar	-Color
+ ¿Cuales són los métodos de una clase carro?
+	-Acelerar	-Frenar		-Encender	-Girar		-Poner seguros		-Abrir puertas
+
+Diferencia entre clase y objeto:
+	-La clase es el modelo, patron que define como está conformado un Objeto y a través de ella los objetos creados.
+	-Clase es definir que todos los carros tienen un modelo, año o color. Objeto es un caso en particular, por ejemplo un de ese conjunto de carros tengo un
+	 Mercedes de año 2009 color blanco
+
+
+
+	class Carro{
+		double tamaño; //Todo objeto de clase carro va a tener estas caracteristicas. 
+		string marca;
+		int puertas;
+
+		void camina(){ //Metodo
+		
+		}
+	}
+
+//Definiendo la existencia de un carro de la clase Carro
+
+	Carro miCarro = new Carro();
+	miCarro.tamaño = 3.00; //Defines los valores de ese objeto
+	miCarro.marca = "VW"; // Si no defines los valores empieza con el valor de default: 0,False, etc...
+	miCarro.puertas = 4;
+
+	miCarro.camina();
+
+Como distingues un constructor que a un metodo:
+	- Tiene el mismo nombre que la clase.
+	- Cuando lo declaras nunca especificas tipo valor de return. A un metodo normalmente pones int, double, float o void pero a este nada.
+	- Se mandan a llamar con el operador "new" para crear el objeto con esos valores iniciales.
+	- No puede haber 2 metodos con el mismo nombre.
+
+Encapsulamiento: Es la capacidad que tienen los objetos de agrupar métodos y variables. Esto ofrece principalmente 2 beneficios:
+	1. Modularidad
+	2. Mejor administración de la informacion
+El profesor hizo un dibujo de un circulo tipo el logo de Google Crome donde los comportamientos son parte de los colores verde, rojo y amarillo y estos protegen
+a los atributos los cuales estan en el circulo azul de enmedio, estos siendo privados.
+setTemp (Modifica un atributo)
+getTemp (Revisa un atributo)
+
+	Para más información al respecto del tema se realizo en archivo Termometro.java

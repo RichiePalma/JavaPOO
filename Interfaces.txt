@@ -1,0 +1,15 @@
+			INTERFACES
+
+*Una interface no puede tener atributos, solo metodos abstractos y constantes
+*interface en lugar de class
+
+--->Interface Comparable solo tiene un método
+
+	int compareTo(Object obj)
+		*Recibe un objeto como parametro a comparar
+		*Regresa 0 si son iguales, un entero positivo si el objeto actual (a.compareTo(b)) (a es obj actual) es mayor que el parámetro
+			 y negativo si es el otro caso.
+		
+--->Interface Cloneable
+	*No define ningún metodo a implementar
+		

@@ -1,0 +1,42 @@
+
+				ARREGLOS
+--> Declarar un arreglo
+
+	int[] numeros;
+	String[] args; //Si quitas [] estas declarando una variable
+
+--> Creación de arreglos
+
+	int[] numeros = new int[6]; //Donde 6 es el tamaño de elementos en el arreglo
+
+	int[] numeros = {8,2,6,4,9,5};
+
+--> Cardinalidad & Modificar estas
+
+	int [] numeros = {8,2,6,4,9,5};
+	numers[3] = 10;
+		La posición 3 (Empezando desde 0) es modificado al valor 10 osea 4 cambia a 10
+
+--> Pasar un arreglo como parametro
+
+	public void hola(int[] numeros){
+		System.out.println(numeros[0]);
+	}
+
+--> Regresar un arreglo
+
+	public String[] regresa() //Regresa un arreglo de Strings, sin [] solo regresa 1 string.
+
+
+Un arreglo de tamaño n la posición máxima es n-1.
+
+--> Recorrer un arreglo
+
+	//Pasar por todo el arreglo y sus componentes.
+
+	for(int i = 0; i< arreglo.lenght;i++){ // .lenght analiza el tamaño-longitud del arreglo
+		arreglo[i]; //Y despues la operación a realizar
+	}
+
+
+//Prueba arreglos "suma" suma todos los componentes de un arreglo, "maximo" encuentra el maximo, etc...

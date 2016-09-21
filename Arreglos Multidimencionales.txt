@@ -1,0 +1,40 @@
+									ARREGLOS MULTIDIMENCIONALES
+
+	Cuando es bidimencional es necesario 2 corchetes
+
+	a[0][1] Donde 0 es "Row (Fila)" y 1 es "Column (Columna)" 
+
+	osea:
+
+	arreglo[fila][columna];
+
+--> Inicialización
+
+	int[][] b = {{1,2},{3,4}};
+
+--> Diferente longitud de filas
+
+	int[][] b = {{1,2},{3,4,5}};
+
+--> Creación con new
+									 ______ ______ ______
+	int[][] b;							|______|______|______|
+	b= new int[2][3]; //2 filas por 3 columnas  ------>		|______|______|______|
+
+--> Acceder a un elemento del arrego
+
+	int[][] c;
+	c=new int[2][];
+				     a[i][j] 	 ______ ______ ______ ______ ______
+	c[0]=new int[5];		a[0]-->	|______|______|__9___|______|______|
+	c[1]=new int[3];     ------->		|______|______|______|
+	c[0][2]=9;			//0 es de j
+
+
+
+--> Recorrer arreglo
+	for(int i=0; i<arreglo.length; i++){
+		for(int j=0; j<arreglo[i].length; j++){ 
+			arreglo[i][j];
+		}
+	}

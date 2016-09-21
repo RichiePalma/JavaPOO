@@ -1,0 +1,28 @@
+		Herencia
+*Mecanismo a través del cual una clase adquiere las propiedades de otra(métodos y atributos).
+
+*Relación tipo "Es un..."
+
+*En Java solamente se permite la herencia sencilla (Solamente una clase)
+
+	class ClaseNueva extends ClaseExtistente //Nueva = Hijo ; Existente = Padre
+
+*Los miembros privados de la superclase NO pueden accederse directamente
+
+--> Llamar un constructor de la misma clase
+	this(parametro1,parametro2,parametro3);
+
+--> Llamar un constructor de una clase padre desde una hija
+	super(parametro1,parametro2,parametro3);
+
+-->Llamar un metodo de la misma clase
+	this.metodo();
+
+--> Llamar un metodo de una clase padre desde una hija
+	super.metodo();
+
+--> Modificador ' protected '
+	El atributo es publico para las clases hijas pero privado para los demas.
+
+*Todas las clases heredan de la Clase Object
+
