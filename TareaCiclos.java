@@ -37,7 +37,7 @@ public class TareaCiclos{
 				parametro = parametro/factor;		//Entonces se imprime y ese resultado se evalua si es divisible por el mismo dividuendo
 				System.out.println(factor);
 			}
-			else{		//Si no lo es, entonces se aÃ±ade 1 al factor para evaluar la condiciÃ³n con el siguiente valor de este.
+			else{		//Si no lo es, entonces se añade 1 al factor para evaluar la condición con el siguiente valor de este.
 				factor++;
 			}
 		}		
@@ -48,7 +48,7 @@ public class TareaCiclos{
 
 /* Lo intente hacer con un for en lugar de un while pero no imprimia todos los factores
 	por ejemplo en el de 150 solo imprimia 2 y 3 pero no 5 y 5. Por eso cambie a un while
-		aun asÃ­ dejo el lo que hice con el for como comentario
+		aun así dejo el lo que hice con el for como comentario
 
 	public static void factores(){
 		String sParametro=JOptionPane.showInputDialog("Inserta el limite del parametro");

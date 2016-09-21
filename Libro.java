@@ -7,7 +7,7 @@ public class Libro{
 	public static void main(String[] args){
 		Libro miLibro=new Libro();
 		miLibro.titulo= "Ensayo sobre la ceguera";
-		miLibro.autor="JosÃ© Saramago";
+		miLibro.autor="José Saramago";
 		miLibro.editorial="Alfaguara";
 		miLibro.isbn="9789724212470";
 		
@@ -24,7 +24,7 @@ public class Libro{
 
 	public Libro(){ //Valores default
 		titulo="Un asesino solitario";
-		autor="Ã‰lmer Mendoza";
+		autor="Élmer Mendoza";
 		editorial="Tusquets";
 		isbn="9789706990433";
 		

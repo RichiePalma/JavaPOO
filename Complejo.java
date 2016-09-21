@@ -1,7 +1,16 @@
 /*
 	Autor: Ricardo Daniel Palma Mendoza A01226922
 	Clase: Complejo
-	Fecha: 28/08/2016
+	Fecha: 31/08/2016
+*/
+
+/*
+Complejo a=new Complejo();
+Complejo b=new Complejo(-3,5);
+
+Complejo c=a.multiplicacion(b);
+Complejo d=a.multiplicacion(5.4);
+
 */
 
 import javax.swing.*;
@@ -9,168 +18,118 @@ import javax.swing.*;
 public class Complejo{
 
 	public static void main(String[] args){
-		Complejo a=new Complejo(1.0,7.0,3.0,2.0);
-		Complejo c=new Complejo(); 
+		Complejo a=new Complejo();
+		Complejo b=new Complejo(3.0,2.0); 
+		// Complejo c=a.suma(b);
 
 		a.imprimir();
-		a.suma();
-		a.resta();
-		a.multiplicacionAC();
-		a.multiplicacionXC();
-		a.conjugado();
+		b.imprimir();
 
-		c.agregar();
+		a.agregar(3.0,5.0);
+		b.agregar(2.0,4.0);
+
+		a.agregar(b);
+		a.suma(b);
+		a.resta(b);
+		a.multiplicacionAC(b);
+		b.multiplicacionXC(8.0);
+		conjugado(a);
+		conjugado(b);
 	}
 
 // Comienzo de declarando la existencia del objeto y todo lo que debe de tener.
 
-// -------------Apartir de aqui comienzan los valores de a---------------
+	private double real,
+		imaginario;
 
-	private double A, //Real , para c este seria C
-		Bi, //Imaginaria, para c este seria Di
+	//private double [] valores = {real, imaginario};
 
-//--------------Apartir de aqui comienzan los valores de c --------------
-
-		C, //Real
-		Di; //Imaginaria
-
-	public Complejo(){
-		this(0,0,0,0);
-
+	public Complejo(){ //Default
+		this(1,7);
 	}
 
-	public Complejo(double A, double Bi, double C, double Di){
-		establecer(A,Bi,C,Di); //
+	public Complejo(double real, double imaginario){
+		establecer(real, imaginario); //
 	}
 
-	public void establecer(double A, double Bi, double C, double Di){ //establecer() <--
-		this.A=A;
-		this.Bi=Bi;
-		this.C=C;
-		this.Di=Di;
+	public void establecer(double real, double imaginario){ //establecer() <--
+		this.real=real;
+		this.imaginario=imaginario;
+		//this.valores=valores;
+
 	}
-	
-	public double getA(){
-		return this.A;
+/*
+	public double[] getValores(){
+		return this.valores;
+	}
+*/
+	public double getReal(){
+		return this.real;
 	}
 
-	public double getBi(){
-		return this.Bi;
+	public double getImaginario(){
+		return this.imaginario;
 	}
-	
-	public void imprimir(){ // imprimir() <--
-		System.out.println("a = " + this.A + " + " + this.Bi + "i");
-		System.out.println("c = " + this.C + " + " + this.Di + "i");
+
+
+	public void imprimir(){ 
+		System.out.println("a = " + this.real + " + " + this.imaginario + "i");
 	}
+
 
 //Final de declarando la existencia del objeto y todo lo que debe de tener.
 
-/* Pendiente... 
-	
-	public static void agregar(){
-	
+	public void agregar(double c, double d){
+		double agregar_reales = this.real + c;
+		double agregar_imaginarios = this.imaginario + d;
+		System.out.println("El resultado de sumar " + c + " + " + d +"i a la variable a es: " + agregar_reales + " + " + agregar_imaginarios + "i");
 	}
-*/
+
+	public void agregar(Complejo c){
+		double agregar_complejoReal = this.real + c.real;
+		double agregar_complejoImaginario = this.imaginario + c.imaginario;
+		System.out.println("El resultado de agregar las dos variables entre si es de: " + agregar_complejoReal + " + " + agregar_complejoImaginario + "i");
+	}
 
 // ----------------------Comienzo inciso 8.8----------------------
 
-	public void suma(){
-		Double suma_reales = this.A + this.C;
-		Double suma_imaginarios = this.Bi + this.Di;
-		if(suma_imaginarios >= 0){  //Si sale positivo salga el signo de suma para separar reales e imaginarios.
-						
-			System.out.println("Resultado de la suma es: " + suma_reales + " + " + suma_imaginarios + "i" );
-		}
-		else{		// si sale negativo el resultado imaginario imprimira el signo de menos que separara reales e imaginarios.
-			System.out.println("Resultado de la suma es: " + suma_reales + suma_imaginarios + "i" );
-		}
+	// No logre entender o mejor dicho hacer funcionar la parte de Complejo c=a.suma(b); 
+	// Pero con el objetivo de entregar la tarea completa con lo que se logro corregir, se anexa lo siguiente.
+
+
+	public void suma(Complejo c){
+		double sumar_complejoReal = this.real + c.real;
+		double sumar_complejoImaginario = this.imaginario + c.imaginario;
+		System.out.println("El resultado de sumar las dos variables es de: " + sumar_complejoReal + " + " + sumar_complejoImaginario + "i");
 	}
 
-	public void resta(){
-		Double resta_reales = this.A - this.C;
-		Double resta_imaginarios = this.Bi - this.Di;
-		if(resta_imaginarios >= 0){
-			System.out.println("Resultado de la resta es: " + resta_reales + " + " + resta_imaginarios + "i");
-		}
-		else{
-			System.out.println("Resultado de la resta es: " + resta_reales + resta_imaginarios + "i");
-		}
+	public void resta(Complejo c){
+		double restar_complejoReal = this.real - c.real;
+		double restar_complejoImaginario = this.imaginario - c.imaginario;
+		System.out.println("El resultado de sumar las dos variables es de: " + restar_complejoReal + " + " + restar_complejoImaginario + "i");
 	}
 
-	public void multiplicacionAC(){
-		Double multiplicacion_reales = (this.A * this.C) - (this.Bi * this.Di);
-		Double multiplicacion_imaginarios = (this.A *this.Di) + (this.Bi * this.C);
-		if(multiplicacion_imaginarios >= 0){
-			System.out.println("Resultado de la multiplicación a*c es: " + multiplicacion_reales + " + " + multiplicacion_imaginarios + "i");
-		} 
-		else{
-			System.out.println("Resultado de la multiplicación a*c es: " + multiplicacion_reales + multiplicacion_imaginarios + "i");
-		}
+	public void multiplicacionAC(Complejo c){
+		double multi_real = (this.real*c.real) - (this.imaginario * c.imaginario);
+		double multi_imaginario = (this.real*c.imaginario) - (this.imaginario * c.real);
+		System.out.println("El resultado de la multiplicaci�n entre ambas variables es: " + multi_real + " + " + multi_imaginario + "i");
+
 	}
 
-	public void multiplicacionXC(){
-		Double X = Double.valueOf(JOptionPane.showInputDialog("Inserte valor de x (real): "));
-		Double multiplicacionX_real = X * this.C;
-		Double multiplicacionX_imaginaria = X * this.Di;
-		if(multiplicacionX_imaginaria >= 0){
-			System.out.println("Resultado de la multiplicación x*c es: " + multiplicacionX_real + " + " + multiplicacionX_imaginaria + "i");
-		} 
-		else{
-			System.out.println("Resultado de la multiplicación x*c es: " + multiplicacionX_real + " + " + multiplicacionX_imaginaria + "i");
-		}
+	public void multiplicacionXC(double x){
+		double xmulti_real = x * this.real;
+		double xmulti_imaginario = x * this.imaginario;
+		System.out.println("El resultado de la multiplicaci�n entre "+ x + " es: " + xmulti_real + " + " + xmulti_imaginario + "i");
+
 	}
 	
-	public void conjugado(){
-		if(this.Bi > 0){
-			System.out.println("Conjugado de a es ¬a = " + this.A + "-" + this.Bi + "i");
+	public static void conjugado(Complejo c){
+		double negado = -c.imaginario;
+		if(negado>=0){
+			System.out.println("El conjugado de es: " + c.real + " + " + negado + "i");
 		}
-		else{ 
-			System.out.println("Conjugado de ¬a = " + this.A + " + " + (this.Bi*-1) + "i");
-		}
-	}
-	
-	public void agregar(){
-		String incorporar = JOptionPane.showInputDialog("¿Te gustaria sumar tus propios numero complejo? Si / No");
-		while(incorporar.equalsIgnoreCase("si")){
-			Double realA = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte real del 1er numero complejo? "));
-			Double imaginarioA = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte imaginaria de 1er numero complejo? "));
-			Double realB = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte real de 2ndo numero complejo? "));
-			Double imaginarioB = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte imaginaria de 2ndo numero complejo? "));
-
-			this.A=realA;
-			this.Bi=imaginarioA;
-			this.C=realB;
-			this.Di=imaginarioB;
-
-//-----------------------------Suma-----------------------------
-
-			Double SumarReales = this.A + this.C;
-			Double SumarImaginarios =this.Bi + this.Di;
-			if(SumarImaginarios >= 0){ 
-				System.out.println("Resultado de la suma de tus valores es: " + SumarReales + " + " + SumarImaginarios + "i" );
-			}
-			else{		
-				System.out.println("Resultado de la suma de tus valores es: " + SumarReales + SumarImaginarios + "i" );
-			}
-
-
-
-			String continuar = JOptionPane.showInputDialog("¿Te gustaria sumarle al resultado otro numero complejo? Si / No");
-			if(continuar.equalsIgnoreCase("si")){
-				Double siguienteReal = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte real del siguiente numero complejo? "));
-				Double siguienteImaginario = Double.valueOf(JOptionPane.showInputDialog("¿Cual es el valor de la parte imaginaria del siguiente numero complejo? "));
-				Double SumarSiguienteReal = SumarReales + siguienteReal;
-				Double SumarSiguienteImaginario = SumarImaginarios + siguienteImaginario;	
-				if(SumarSiguienteImaginario >= 0){ 
-					System.out.println("Resultado de la suma de tus valores es: " + SumarSiguienteReal + " + " + SumarSiguienteImaginario + "i" );
-				}
-				else{		
-				System.out.println("Resultado de la suma de tus valores es: " + SumarSiguienteReal + SumarSiguienteImaginario + "i" );
-				}
-			}
-			else{
-				break;
-			}
+		else{
+			System.out.println("El conjugado de es: " + c.real + " - " + c.imaginario + "i");
 		}
 	}
 }
