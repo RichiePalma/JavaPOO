@@ -14,7 +14,12 @@ public class Casilla {
 	}
 	
 	public void setValor(boolean valor){
-		this.valor=valor;
+			if(valor == false){
+				this.O=O;
+			}
+			else{
+				this.X=X;
+			}
 	}
 	public boolean getValor(){
 		return this.valor;
