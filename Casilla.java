@@ -7,19 +7,14 @@ public class Casilla {
 						  O;
 	
 	public Casilla(){
-		this.disponible = false;
+		this.disponible = true;
 		this.valor=false;
 		this.X=true;
 		this.O=false;//Es false
 	}
 	
 	public void setValor(boolean valor){
-			if(valor == false){
-				this.O=O;
-			}
-			else{
-				this.X=X;
-			}
+			this.valor=valor;
 	}
 	public boolean getValor(){
 		return this.valor;
@@ -47,9 +42,9 @@ public class Casilla {
 			return " "; //Si esta disponible el espacio esta en blanco
 		}
 	}
-	public static void main(String[] args) {
-		System.out.println("Si compilo");
-		System.out.println(O);
-	}
+//	public static void main(String[] args) {
+//		System.out.println("Si compilo");
+//		System.out.println(O);
+//	}
 
 }
