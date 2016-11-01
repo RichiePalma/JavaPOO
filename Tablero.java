@@ -80,20 +80,25 @@ public class Tablero {
 				//				}
 				this.turnosTotales++;
 
-				if (this.turnosTotales>4){
-					break;
+				if(numTurno ==2){
+					numTurno=1;
+					this.casillas[ejeX][ejeY][ejeZ].setValor(Casilla.O);
+				}
+				else{
+					numTurno=2;
+					this.casillas[ejeX][ejeY][ejeZ].setValor(Casilla.X);
 				}
 				for(int i = 0; i<3; i++){ //[x][y][z]
-					System.out.println(this.casillas[0][0][i]+"|"+this.casillas[1][0][i]+"|"+this.casillas[2][0][i] + "\n -----"); 
+					System.out.println(this.casillas[0][0][i]+" |"+this.casillas[1][0][i]+"|"+this.casillas[2][0][i] + "\n -----"); 
 					//Imprime los ejes x en y=0 del i gato donde en este caso seran i = 3 gatos
-					System.out.println(this.casillas[0][1][i]+"|"+this.casillas[1][1][i]+"|"+this.casillas[2][1][i] + "\n -----"); 
+					System.out.println(this.casillas[0][1][i]+" |"+this.casillas[1][1][i]+"|"+this.casillas[2][1][i] + "\n -----"); 
 					//Ejes x en y=1 del i gato
-					System.out.println(this.casillas[0][2][i]+"|"+this.casillas[1][2][i]+"|"+this.casillas[2][2][i]); 
+					System.out.println(this.casillas[0][2][i]+" |"+this.casillas[1][2][i]+"|"+this.casillas[2][2][i]); 
 					//ejes x en y=2 del i gato
 					System.out.println(" "+"\n"+" ");
 				}
 
-			}while((this.totalEjes>=0 || this.totalEjes < 7));
+			}while((this.totalEjes>=0 || this.totalEjes < 7) /*|| this.casillas[ejeX][ejeY][ejeZ].getDisponible()==false*/);
 
 		}catch(NullPointerException e){
 			if(numTurno ==2){ //el else hace unTurno==2 por eso si cancela tecnicamente esta perdiendo jugador 1
@@ -182,15 +187,15 @@ public class Tablero {
 		}
 	}
 	public void imprimeTablero(){
-		//		for(int i = 0; i<3; i++){ //[x][y][z]
-		//			System.out.println(this.casillas[0][0][i]+"|"+this.casillas[1][0][i]+"|"+this.casillas[2][0][i] + "\n -----"); 
-		//			//Imprime los ejes x en y=0 del i gato donde en este caso seran i = 3 gatos
-		//			System.out.println(this.casillas[0][1][i]+"|"+this.casillas[1][1][i]+"|"+this.casillas[2][1][i] + "\n -----"); 
-		//			//Ejes x en y=1 del i gato
-		//			System.out.println(this.casillas[0][2][i]+"|"+this.casillas[1][2][i]+"|"+this.casillas[2][2][i]); 
-		//			//ejes x en y=2 del i gato
-		//			System.out.println(" "+"\n"+" ");
-		//		}
+//				for(int i = 0; i<3; i++){ //[x][y][z]
+//					System.out.println(this.casillas[0][0][i]+"|"+this.casillas[1][0][i]+"|"+this.casillas[2][0][i] + "\n -----"); 
+//					//Imprime los ejes x en y=0 del i gato donde en este caso seran i = 3 gatos
+//					System.out.println(this.casillas[0][1][i]+"|"+this.casillas[1][1][i]+"|"+this.casillas[2][1][i] + "\n -----"); 
+//					//Ejes x en y=1 del i gato
+//					System.out.println(this.casillas[0][2][i]+"|"+this.casillas[1][2][i]+"|"+this.casillas[2][2][i]); 
+//					//ejes x en y=2 del i gato
+//					System.out.println(" "+"\n"+" ");
+//				}
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------------------------
@@ -203,9 +208,7 @@ public class Tablero {
 
 		while(gato3D.empate()==false&&gato3D.gano()==false){
 			gato3D.pedirCoordenada();
-			if(gato3D.empate()==true){
-				break;
-			}
+			
 		}
 	}
 }

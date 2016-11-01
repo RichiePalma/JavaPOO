@@ -9,12 +9,19 @@ public class Casilla {
 	public Casilla(){
 		this.disponible = true;
 		this.valor=false;
-		this.X=true;
-		this.O=false;//Es false
+		X=true;
+		O=false;//Es false
 	}
 	
 	public void setValor(boolean valor){
-			this.valor=valor;
+		if(valor==true){
+			this.valor=Casilla.O;
+			this.disponible=false;
+		}
+		else{
+			this.valor=Casilla.X;
+			this.disponible=false;
+		}
 	}
 	public boolean getValor(){
 		return this.valor;
@@ -29,7 +36,7 @@ public class Casilla {
 	}
 
 	public String toString(){
-		if(this.getDisponible()==false){
+		if(this.disponible==false){
 			if(this.getValor()==true ){ // Si no esta disponible y aparte es true entonces regresa/imprime X
 				return "X";
 			}
