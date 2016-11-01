@@ -1,4 +1,8 @@
-
+/*	Ricardo Daniel Palma Mendoza A01226922
+ * 	Andres Quiroz 
+ *	Clase: Casilla
+ *	Fecha 01/11/2016
+ */
 public class Casilla {
 	private boolean disponible, //Casilla vacia = true , Llena = false
 					valor; // Si casilla es X = true , si es O = false
@@ -49,9 +53,5 @@ public class Casilla {
 			return " "; //Si esta disponible el espacio esta en blanco
 		}
 	}
-//	public static void main(String[] args) {
-//		System.out.println("Si compilo");
-//		System.out.println(O);
-//	}
 
 }
