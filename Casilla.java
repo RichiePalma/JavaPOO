@@ -1,5 +1,5 @@
 /*	Ricardo Daniel Palma Mendoza A01226922
- * 	Andres Quiroz 
+ * 	Andres Quiroz Duarte A01400033 
  *	Clase: Casilla
  *	Fecha 01/11/2016
  */

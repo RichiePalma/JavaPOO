@@ -1,5 +1,5 @@
 /*	Ricardo Daniel Palma Mendoza A01226922
- * 	Andres Quiroz 
+ * 	Andres Quiroz Duarte A01400033 
  *	Clase: Casilla
  *	Fecha 01/11/2016
  */
@@ -53,8 +53,7 @@ public class Tablero {
 					this.ejeY = Integer.valueOf(this.coordenada.nextToken()) - 1;   // pero en el arrego solo hay posiciones 0,1 y 2
 					this.ejeZ = Integer.valueOf(this.coordenada.nextToken()) - 1;
 					this.totalEjes = ejeX+ejeY+ejeZ; //Para evitar que salga fuera del rango de ejes y así evitar hacer un largo if, el maximo es 6 ya que 2+2+2
-					System.out.println("X: " + ejeX + " Y: "+ejeY+" Z: "+ejeZ + " Total " + totalEjes);
-					
+
 					if(this.casillas[ejeX][ejeY][ejeZ].getDisponible()==true){
 						if(numTurno ==2){
 							this.casillas[ejeX][ejeY][ejeZ].setValor(Casilla.X);
@@ -96,22 +95,23 @@ public class Tablero {
 					this.turnosTotales=this.exceptionTurnos;
 					JOptionPane.showMessageDialog(null,"Por favor inserte 3 numeros y no letras ");
 				}catch(ArrayIndexOutOfBoundsException ez){
-									if(numTurno ==2){
-										numTurno=1;
-									}
-									else{
-										numTurno=2;
-									}
-									this.turnosTotales=this.exceptionTurnos;
-									JOptionPane.showMessageDialog(null, "Inserte un numero del 1 al 3");
-								}
-				imprimeTablero();				
-
-				if(gano()==true){
-					gano();
+					if(numTurno ==2){
+						numTurno=1;
+					}
+					else{
+						numTurno=2;
+					}
+					this.turnosTotales=this.exceptionTurnos;
+					JOptionPane.showMessageDialog(null, "Inserte un numero del 1 al 3");
+				}
+				imprimeTablero();
+				if(empate()==true){
 					break;
 				}
-				
+				else if(gano()==true){
+					break;
+				}
+
 				this.exceptionTurnos=this.turnosTotales;
 				this.turnosTotales++;
 
@@ -248,15 +248,17 @@ public class Tablero {
 		}
 	}
 	public void imprimeTablero(){
-						for(int i = 0; i<3; i++){ //[x][y][z]
-							System.out.println(this.casillas[0][0][i]+"|"+this.casillas[1][0][i]+"|"+this.casillas[2][0][i] + "\n -----"); 
-							//Imprime los ejes x en y=0 del i gato donde en este caso seran i = 3 gatos
-							System.out.println(this.casillas[0][1][i]+"|"+this.casillas[1][1][i]+"|"+this.casillas[2][1][i] + "\n -----"); 
-							//Ejes x en y=1 del i gato
-							System.out.println(this.casillas[0][2][i]+"|"+this.casillas[1][2][i]+"|"+this.casillas[2][2][i]); 
-							//ejes x en y=2 del i gato
-							System.out.println(" "+"\n"+" ");
-						}
+		System.out.println("------------------------------ Turno: "+this.turnosTotales+"------------------------------");
+		for(int i = 0; i<3; i++){ //[x][y][z]
+			System.out.println(this.casillas[0][0][i]+" |"+this.casillas[1][0][i]+"|"+this.casillas[2][0][i] + "\n -----"); 
+			//Imprime los ejes x en y=0 del i gato donde en este caso seran i = 3 gatos
+			System.out.println(this.casillas[0][1][i]+" |"+this.casillas[1][1][i]+"|"+this.casillas[2][1][i] + "\n -----"); 
+			//Ejes x en y=1 del i gato
+			System.out.println(this.casillas[0][2][i]+" |"+this.casillas[1][2][i]+"|"+this.casillas[2][2][i]); 
+			//ejes x en y=2 del i gato
+			System.out.println(" "+"\n"+" ");
+		}
+		
 	}
 
 	//----------------------------------------------------------------------------------------------------------------------------------------
@@ -268,7 +270,6 @@ public class Tablero {
 		//gato3D.imprimeTablero();
 		//while(gato3D.empate()==false&&gato3D.gano()==false){
 		gato3D.pedirCoordenada();
-		gato3D.gano();
 
 		//}
 	}
