@@ -7,7 +7,7 @@ public class Casilla {
 	private boolean disponible, //Casilla vacia = true , Llena = false
 					valor; // Si casilla es X = true , si es O = false
 	
-	public static boolean X,
+	public static boolean X, //Se podria hacer final inclusive, ya que el valor de estos nunca deben de cambiar y no deberian de
 						  O;
 	
 	public Casilla(){
@@ -20,7 +20,7 @@ public class Casilla {
 	public void setValor(boolean valor){
 		if(valor==true){
 			this.valor=Casilla.O;
-			this.disponible=false;
+			this.disponible=false; //Para que muestre que ya esta lleno una vez puesto el valor
 		}
 		else{
 			this.valor=Casilla.X;

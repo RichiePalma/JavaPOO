@@ -30,7 +30,6 @@ public class Tablero {
 				}
 			}
 		}
-		//prueba = new int[3]; //ArrayIndexOutOfBoundsException
 	}
 
 	public boolean pedirCoordenada(){
@@ -105,7 +104,7 @@ public class Tablero {
 					JOptionPane.showMessageDialog(null, "Inserte un numero del 1 al 3");
 				}
 				imprimeTablero();
-				if(empate()==true){
+				if(empate()==true){ //al llamar el metodo dentro del if se ejecuta cuando se cumpla la condicion
 					break;
 				}
 				else if(gano()==true){
@@ -115,7 +114,7 @@ public class Tablero {
 				this.exceptionTurnos=this.turnosTotales;
 				this.turnosTotales++;
 
-			}while((this.totalEjes>=0 || this.totalEjes < 7) /*|| this.casillas[ejeX][ejeY][ejeZ].getDisponible()==false*/);
+			}while((this.totalEjes>=0 || this.totalEjes < 7));
 
 		}catch(NullPointerException e){
 			if(numTurno ==2){ //el else hace unTurno==2 por eso si cancela tecnicamente esta perdiendo jugador 1
@@ -261,16 +260,8 @@ public class Tablero {
 		
 	}
 
-	//----------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 	public static void main(String[] args){	
 		Tablero gato3D = new Tablero();
-		//gato3D.imprimeTablero();
-		//while(gato3D.empate()==false&&gato3D.gano()==false){
 		gato3D.pedirCoordenada();
-
-		//}
 	}
 }
