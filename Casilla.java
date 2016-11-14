@@ -1,9 +1,11 @@
+
+
 /*	Ricardo Daniel Palma Mendoza A01226922
  * 	Andres Quiroz Duarte A01400033 
  *	Clase: Casilla
  *	Fecha 01/11/2016
  */
-public class Casilla {
+public class Casilla{
 	private boolean disponible, //Casilla vacia = true , Llena = false
 					valor; // Si casilla es X = true , si es O = false
 	

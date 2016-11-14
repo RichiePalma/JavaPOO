@@ -10,7 +10,8 @@ import javax.swing.JOptionPane;
 
 import java.util.NoSuchElementException;
 
-public class Tablero {
+public class Tablero{
+	
 	private Casilla[][][] casillas;
 	private int turnosTotales;
 	private int exceptionTurnos; //este hace que el contador no siga aumentando si el usuario cae en una excepción 
