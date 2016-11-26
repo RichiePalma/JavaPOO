@@ -7,26 +7,31 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.OutputStream;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 import gnu.io.SerialPort;
 
-public class PanelGato extends JPanel implements MouseListener{
-	
-	private JButton casilla1,casilla2,casilla3,casilla4,casilla5,casilla6,casilla7,casilla8,casilla9,
+public class PanelGato extends JPanel implements ActionListener{
+
+	private JToggleButton casilla1,casilla2,casilla3,casilla4,casilla5,casilla6,casilla7,casilla8,casilla9,
 	casilla10,casilla11,casilla12,casilla13,casilla14,casilla15,casilla16,casilla17,casilla18,
 	casilla19,casilla20,casilla21,casilla22,casilla23,casilla24,casilla25,casilla26,casilla27;
-	
+
 	private Casilla[][][] casillas;
 	public static Tablero tab;
 	private int turnosTotales;
@@ -44,14 +49,14 @@ public class PanelGato extends JPanel implements MouseListener{
 	private static final int TIME_OUT = 2000;	/** Milliseconds to block while waiting for port open */
 	private static final int DATA_RATE = 9600;  /** Default bits per second for COM port. */
 	private boolean encendido,
-					reiniciar;
-	
+	reiniciar;
+
 	private static PanelGato pg;
-	
+
 	private int ac1, ac2, ac3, ac4, ac5, ac6, ac7, ac8, ac9, ac10, ac11, ac12, ac13, ac14, ac15,
 	ac16, ac17, ac18, ac19, ac20, ac21, ac22, ac23, ac24, ac25, ac26, ac27,turno,dis1,dis2,dis3,dis4,dis5,dis6,dis7,
 	dis8,dis9,dis10,dis11,dis12,dis13,dis14,dis15,dis16,dis17,dis18,dis19,dis20,dis21,dis22,dis23,dis24,dis25,dis26,dis27;
-	
+
 	public PanelGato(){
 		super();
 		this.setPreferredSize(new Dimension(800,300));
@@ -59,74 +64,46 @@ public class PanelGato extends JPanel implements MouseListener{
 		this.ac1=this.ac2=this.ac3=this.ac4=this.ac5=this.ac6=this.ac7=this.ac8=this.ac9=0;
 		this.ac10=this.ac11=this.ac12=this.ac13=this.ac14=this.ac15=this.ac16=this.ac17=this.ac18=0;
 		this.ac19=this.ac20=this.ac21=this.ac22=this.ac23=this.ac24=this.ac25=this.ac26=this.ac27=0;
-		
+
 		this.dis1=this.dis2=this.dis3=this.dis4=this.dis5=this.dis6=this.dis7=this.dis8=this.dis9=this.dis10=1;
 		this.dis11=this.dis12=this.dis13=this.dis14=this.dis15=this.dis16=this.dis17=this.dis18=this.dis19=1;
 		this.dis20=this.dis21=this.dis22=this.dis23=this.dis24=this.dis25=this.dis26=this.dis27=1;
-		
+
 		this.turno=1;
-		
-		
-		
+
+
+
 		//Primer Tablero
-		this.casilla1=new JButton();
-		this.casilla2=new JButton();
-		this.casilla3=new JButton();
-		this.casilla4=new JButton();
-		this.casilla5=new JButton();
-		this.casilla6=new JButton();
-		this.casilla7=new JButton();
-		this.casilla8=new JButton();
-		this.casilla9=new JButton();
+		this.casilla1=new JToggleButton("");
+		this.casilla2=new JToggleButton("");
+		this.casilla3=new JToggleButton("");
+		this.casilla4=new JToggleButton("");;
+		this.casilla5=new JToggleButton("");;
+		this.casilla6=new JToggleButton("");;
+		this.casilla7=new JToggleButton("");;
+		this.casilla8=new JToggleButton("");;
+		this.casilla9=new JToggleButton("");;
 		//Segundo Tablero
-		this.casilla10=new JButton();
-		this.casilla11=new JButton();
-		this.casilla12=new JButton();
-		this.casilla13=new JButton();
-		this.casilla14=new JButton();
-		this.casilla15=new JButton();
-		this.casilla16=new JButton();
-		this.casilla17=new JButton();
-		this.casilla18=new JButton();
+		this.casilla10=new JToggleButton("");;
+		this.casilla11=new JToggleButton("");;
+		this.casilla12=new JToggleButton("");;
+		this.casilla13=new JToggleButton("");;
+		this.casilla14=new JToggleButton("");;
+		this.casilla15=new JToggleButton("");;
+		this.casilla16=new JToggleButton("");;
+		this.casilla17=new JToggleButton("");;
+		this.casilla18=new JToggleButton("");;
 		//Tercer Tablero
-		this.casilla19=new JButton();
-		this.casilla20=new JButton();
-		this.casilla21=new JButton();
-		this.casilla22=new JButton();
-		this.casilla23=new JButton();
-		this.casilla24=new JButton();
-		this.casilla25=new JButton();
-		this.casilla26=new JButton();
-		this.casilla27=new JButton();
-		
-		this.casilla1.addMouseListener(this);
-		this.casilla2.addMouseListener(this);
-		this.casilla3.addMouseListener(this);
-		this.casilla4.addMouseListener(this);
-		this.casilla5.addMouseListener(this);
-		this.casilla6.addMouseListener(this);
-		this.casilla7.addMouseListener(this);
-		this.casilla8.addMouseListener(this);
-		this.casilla9.addMouseListener(this);
-		this.casilla10.addMouseListener(this);
-		this.casilla11.addMouseListener(this);
-		this.casilla12.addMouseListener(this);
-		this.casilla13.addMouseListener(this);
-		this.casilla14.addMouseListener(this);
-		this.casilla15.addMouseListener(this);
-		this.casilla16.addMouseListener(this);
-		this.casilla17.addMouseListener(this);
-		this.casilla18.addMouseListener(this);
-		this.casilla19.addMouseListener(this);
-		this.casilla20.addMouseListener(this);
-		this.casilla21.addMouseListener(this);
-		this.casilla22.addMouseListener(this);
-		this.casilla23.addMouseListener(this);
-		this.casilla24.addMouseListener(this);
-		this.casilla25.addMouseListener(this);
-		this.casilla26.addMouseListener(this);
-		this.casilla27.addMouseListener(this);
-		
+		this.casilla19=new JToggleButton("");;
+		this.casilla20=new JToggleButton("");;
+		this.casilla21=new JToggleButton("");;
+		this.casilla22=new JToggleButton("");;
+		this.casilla23=new JToggleButton("");;
+		this.casilla24=new JToggleButton("");;
+		this.casilla25=new JToggleButton("");;
+		this.casilla26=new JToggleButton("");;
+		this.casilla27=new JToggleButton("");;
+
 		this.setLayout(null);
 		//Primer Tablero
 		this.casilla1.setBounds(50, 50, 50, 50);
@@ -158,6 +135,34 @@ public class PanelGato extends JPanel implements MouseListener{
 		this.casilla25.setBounds(570,170,50,50);
 		this.casilla26.setBounds(630,170,50,50);
 		this.casilla27.setBounds(690,170,50,50);
+		//ActionListener
+		this.casilla1.addActionListener(this);
+		this.casilla2.addActionListener(this);
+		this.casilla3.addActionListener(this);
+		this.casilla4.addActionListener(this);
+		this.casilla5.addActionListener(this);
+		this.casilla6.addActionListener(this);
+		this.casilla7.addActionListener(this);
+		this.casilla8.addActionListener(this);
+		this.casilla9.addActionListener(this);
+		this.casilla10.addActionListener(this);
+		this.casilla11.addActionListener(this);
+		this.casilla12.addActionListener(this);
+		this.casilla13.addActionListener(this);
+		this.casilla14.addActionListener(this);
+		this.casilla15.addActionListener(this);
+		this.casilla16.addActionListener(this);
+		this.casilla17.addActionListener(this);
+		this.casilla18.addActionListener(this);
+		this.casilla19.addActionListener(this);
+		this.casilla20.addActionListener(this);
+		this.casilla21.addActionListener(this);
+		this.casilla22.addActionListener(this);
+		this.casilla23.addActionListener(this);
+		this.casilla24.addActionListener(this);
+		this.casilla25.addActionListener(this);
+		this.casilla26.addActionListener(this);
+		this.casilla27.addActionListener(this);
 		//Adders
 		this.add(this.casilla1);
 		this.add(this.casilla2);
@@ -186,6 +191,11 @@ public class PanelGato extends JPanel implements MouseListener{
 		this.add(this.casilla25);
 		this.add(this.casilla26);
 		this.add(this.casilla27);
+
+		JToggleButton prueba = new JToggleButton("");
+		//prueba.setLayout(new GridLayout());
+		prueba.setBounds(0, 0, 50, 50);
+		this.add(prueba);
 	}
 	public boolean gano(){
 		for(int i=0; i<3;i++){ 
@@ -296,47 +306,200 @@ public class PanelGato extends JPanel implements MouseListener{
 		}
 		return false;
 	}
+	public boolean empate(){
+		if(this.turnosTotales >= 27){
+			JOptionPane.showMessageDialog(null, "¡Han empatado!");
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 	
 	public void paintComponent(Graphics g){
-/*
- * Antes de pintar cada componente se establecio que cada casilla mide 50x50
- * Las lineas tienen de grueso 10px ya sea horizontal o vertical
- * Por conveniencia de aparencia, el "O" y "X" deberan de estar 10 px de diferencia en x & y 
- * Esto con el objetivo dee que no intercepten con las lineas del gato
- * Estos tambien tienen un tamaño de 30x30 pixeles
- */
+		/*
+		 * Antes de pintar cada componente se establecio que cada casilla mide 50x50
+		 * Las lineas tienen de grueso 10px ya sea horizontal o vertical
+		 * Por conveniencia de aparencia, el "O" y "X" deberan de estar 10 px de diferencia en x & y 
+		 * Esto con el objetivo dee que no intercepten con las lineas del gato
+		 * Estos tambien tienen un tamaño de 30x30 pixeles
+		 */
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
-		
+
 		//--Gato 1--
 		g.fillRect(50, 100, 170, 10); //--
 		g.fillRect(50, 160, 170, 10); //--
 		g.fillRect(100, 50, 10, 170); // |
 		g.fillRect(160, 50, 10, 170); //   |
 		g.drawString("Gato 1", 115, 240);
-		
+
 		//--Gato 2--
 		g.fillRect(310, 100, 170, 10);
 		g.fillRect(310, 160, 170, 10);
 		g.fillRect(360, 50, 10, 170);
 		g.fillRect(420, 50, 10, 170);
 		g.drawString("Gato 2", 375, 240);
-		
+
 		//--Gato 3--
 		g.fillRect(570, 100, 170, 10);
 		g.fillRect(570, 160, 170, 10);
 		g.fillRect(620, 50, 10, 170);
 		g.fillRect(680, 50, 10, 170);
 		g.drawString("Gato 3", 635, 240);
-		
-		
-		
+
+
+
 	}
-	
-	
+
+	public boolean pedirCoordenada(){
+	do{
+		int numTurno=1;
+		String jugada=null;
+
+		try{
+			do{
+				try{
+					if(numTurno == 2){
+						numTurno=1;
+						//jugada = JOptionPane.showInputDialog("Turno: "+turnosTotales+" | Jugador 2(X): Inserte las coordenadas donde deseas lanzar la jugada");
+					}
+					else{
+						//jugada = JOptionPane.showInputDialog("Turno: "+turnosTotales+" | Jugador 1(O): Inserte las coordenadas donde deseas lanzar la jugada");
+						numTurno=2;
+					}
+					this.coordenada = new StringTokenizer(jugada);
+					this.ejeX = Integer.valueOf(this.coordenada.nextToken()) - 1; // -1 porque para el jugador las coordenadas que inserte el jugador son 1,2 o 3
+					this.ejeY = Integer.valueOf(this.coordenada.nextToken()) - 1;   // pero en el arrego solo hay posiciones 0,1 y 2
+					this.ejeZ = Integer.valueOf(this.coordenada.nextToken()) - 1;
+					this.totalEjes = ejeX+ejeY+ejeZ; //Para evitar que salga fuera del rango de ejes y así evitar hacer un largo if, el maximo es 6 ya que 2+2+2
+
+					if(this.casillas[ejeX][ejeY][ejeZ].getDisponible()==true){
+						if(numTurno ==2){
+							this.casillas[ejeX][ejeY][ejeZ].setValor(Casilla.X);
+							
+
+							this.casillas[ejeX][ejeY][ejeZ].setDisponible(false);
+						}
+						else{
+							this.casillas[ejeX][ejeY][ejeZ].setValor(Casilla.O);
+							this.casillas[ejeX][ejeY][ejeZ].setDisponible(false);
+						}
+						
+					}
+					else{
+						if(numTurno ==2){
+							numTurno=1;
+						}
+						else{
+							numTurno=2;
+						}
+						JOptionPane.showMessageDialog(null, "La casilla esta ocupada, inserte otra porfavor");
+						this.turnosTotales=this.exceptionTurnos;
+					}
+
+				}
+				catch(NoSuchElementException e){
+					if(numTurno ==2){
+						numTurno=1;
+					}
+					else{
+						numTurno=2;
+					}
+					this.turnosTotales=this.exceptionTurnos;
+					JOptionPane.showMessageDialog(null,"Por favor inserte 3 coordenadas separadas por un espacio. Ej: x y z ");
+				}catch(NumberFormatException ex){
+					if(numTurno ==2){
+						numTurno=1;
+					}
+					else{
+						numTurno=2;
+					}
+					this.turnosTotales=this.exceptionTurnos;
+					JOptionPane.showMessageDialog(null,"Por favor inserte 3 numeros y no letras ");
+				}catch(ArrayIndexOutOfBoundsException ez){
+					if(numTurno ==2){
+						numTurno=1;
+					}
+					else{
+						numTurno=2;
+					}
+					this.turnosTotales=this.exceptionTurnos;
+					JOptionPane.showMessageDialog(null, "Inserte un numero del 1 al 3");
+				}
+				if(empate()==true){ //al llamar el metodo dentro del if se ejecuta cuando se cumpla la condicion
+					int newGame= JOptionPane.showConfirmDialog(null, "¿Jugar otra vez?");
+					if(newGame==JOptionPane.YES_OPTION){	//Se reinicia el juego y sus variables
+						this.reiniciar=true;
+						this.totalEjes=0;
+						this.casillas=new Casilla[3][3][3];	//Se crea un nuevo tablero para volver a jugar
+						this.turnosTotales=1;
+						this.exceptionTurnos=0;
+						for(int i=0; i<3; i++){		//Se crea cada parte del tablero
+							for(int j=0; j<3; j++){
+								for(int k=0; k<3; k++){
+									this.casillas[i][j][k]=new Casilla(); 
+								}
+							}
+						}
+					}
+					else{
+						this.setVisible(false);
+						//this.dispose();
+						this.reiniciar=false;
+					}
+					break;
+				}
+				else if(gano()==true){
+					int newGame= JOptionPane.showConfirmDialog(null, "¿Jugar otra vez?");
+					if(newGame==JOptionPane.YES_OPTION){	//Se reinicia el juego y sus variables
+						this.reiniciar=true;
+						this.totalEjes=0;
+						this.casillas=new Casilla[3][3][3];	//Se crea un nuevo tablero para volver a jugar
+						this.turnosTotales=1;
+						this.exceptionTurnos=0;
+						for(int i=0; i<3; i++){		//Se crea cada parte del tablero
+							for(int j=0; j<3; j++){
+								for(int k=0; k<3; k++){
+									this.casillas[i][j][k]=new Casilla(); 
+									
+								}
+							}
+						}
+					}
+					else{
+						this.setVisible(false);
+						//this.dispose();
+						this.reiniciar=false;
+					}
+					break;
+				}
+
+				this.exceptionTurnos=this.turnosTotales;
+				this.turnosTotales++;
+
+			}while((this.totalEjes>=0 || this.totalEjes < 7));
+
+		}catch(NullPointerException e){
+			if(numTurno ==2){ //el else hace unTurno==2 por eso si cancela tecnicamente esta perdiendo jugador 1
+				JOptionPane.showMessageDialog(null,"El jugador 1 se ha rendido ¡Gana el jugador 2!");
+//				this.setVisible(false);
+//				this.dispose();
+				return false;
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "El jugador 2 se ha rendido ¡Gana el jugador 1!");
+//				this.setVisible(false);
+//				this.dispose();
+				return false;
+			}
+		}
+	}while(this.reiniciar);
+	return false;
+}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		if((e.getSource() == this.casilla1)&&(this.turno==1)&&(this.dis1==1)){
 			this.casilla1.setText("X");
 			this.dis1=0;
@@ -661,31 +824,7 @@ public class PanelGato extends JPanel implements MouseListener{
 			this.turno=1;
 			repaint();
 		}
-		
-		
-	}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 }
