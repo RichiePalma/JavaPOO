@@ -1,41 +1,32 @@
-/*	Ricardo Daniel Palma Mendoza A01226922 %33.33
- * 	David Medina Dow A01631918  %33.33
- *  Alejandro Delgado Medrano A01227074 %33.33 
- *	Clase: PanelGato
- *	Fecha 21/11/2016
- */
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.StringTokenizer;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
 
-public class PanelGato extends JPanel implements ActionListener{
+public class PanelGato extends JPanel implements SerialPortEventListener, ActionListener{
 
-	private JToggleButton casilla1,casilla2,casilla3,casilla4,casilla5,casilla6,casilla7,casilla8,casilla9,
+	JToggleButton casilla1,casilla2, casilla3,casilla4,casilla5,casilla6,casilla7,casilla8,casilla9,
 	casilla10,casilla11,casilla12,casilla13,casilla14,casilla15,casilla16,casilla17,casilla18,
 	casilla19,casilla20,casilla21,casilla22,casilla23,casilla24,casilla25,casilla26,casilla27;
 
 	private Casilla[][][] casillas;
 	public static Tablero tab;
 	private int turnosTotales;
-	private int exceptionTurnos; //este hace que el contador no siga aumentando si el usuario cae en una excepciÛn 
+	private int exceptionTurnos; //este hace que el contador no siga aumentando si el usuario cae en una excepciÈèÆ 
 	//private static int[] prueba;
 
 	private int ejeX, ejeY, ejeZ, totalEjes;
@@ -47,9 +38,13 @@ public class PanelGato extends JPanel implements ActionListener{
 	private OutputStream output;
 
 	private static final int TIME_OUT = 2000;	/** Milliseconds to block while waiting for port open */
-	private static final int DATA_RATE = 9600;  /** Default bits per second for COM port. */
+	private static final int DATA_RATE = 9600;
+
+	private static final int GameMac = 0;  /** Default bits per second for COM port. */
 	private boolean encendido,
 	reiniciar;
+
+	private String[] val;
 
 	private static PanelGato pg;
 
@@ -71,38 +66,66 @@ public class PanelGato extends JPanel implements ActionListener{
 
 		this.turno=1;
 
-
+		this.val = new String[27];
 
 		//Primer Tablero
 		this.casilla1=new JToggleButton("");
 		this.casilla2=new JToggleButton("");
 		this.casilla3=new JToggleButton("");
-		this.casilla4=new JToggleButton("");;
-		this.casilla5=new JToggleButton("");;
-		this.casilla6=new JToggleButton("");;
-		this.casilla7=new JToggleButton("");;
-		this.casilla8=new JToggleButton("");;
-		this.casilla9=new JToggleButton("");;
+		this.casilla4=new JToggleButton("");
+		this.casilla5=new JToggleButton("");
+		this.casilla6=new JToggleButton("");
+		this.casilla7=new JToggleButton("");
+		this.casilla8=new JToggleButton("");
+		this.casilla9=new JToggleButton("");
 		//Segundo Tablero
-		this.casilla10=new JToggleButton("");;
-		this.casilla11=new JToggleButton("");;
-		this.casilla12=new JToggleButton("");;
-		this.casilla13=new JToggleButton("");;
-		this.casilla14=new JToggleButton("");;
-		this.casilla15=new JToggleButton("");;
-		this.casilla16=new JToggleButton("");;
-		this.casilla17=new JToggleButton("");;
-		this.casilla18=new JToggleButton("");;
+		this.casilla10=new JToggleButton("");
+		this.casilla11=new JToggleButton("");
+		this.casilla12=new JToggleButton("");
+		this.casilla13=new JToggleButton("");
+		this.casilla14=new JToggleButton("");
+		this.casilla15=new JToggleButton("");
+		this.casilla16=new JToggleButton("");
+		this.casilla17=new JToggleButton("");
+		this.casilla18=new JToggleButton("");
 		//Tercer Tablero
-		this.casilla19=new JToggleButton("");;
-		this.casilla20=new JToggleButton("");;
-		this.casilla21=new JToggleButton("");;
-		this.casilla22=new JToggleButton("");;
-		this.casilla23=new JToggleButton("");;
-		this.casilla24=new JToggleButton("");;
-		this.casilla25=new JToggleButton("");;
-		this.casilla26=new JToggleButton("");;
-		this.casilla27=new JToggleButton("");;
+		this.casilla19=new JToggleButton("");
+		this.casilla20=new JToggleButton("");
+		this.casilla21=new JToggleButton("");
+		this.casilla22=new JToggleButton("");
+		this.casilla23=new JToggleButton("");
+		this.casilla24=new JToggleButton("");
+		this.casilla25=new JToggleButton("");
+		this.casilla26=new JToggleButton("");
+		this.casilla27=new JToggleButton("");
+
+		this.casilla1.addActionListener(this);
+		this.casilla2.addActionListener(this);
+		this.casilla3.addActionListener(this);
+		this.casilla4.addActionListener(this);
+		this.casilla5.addActionListener(this);
+		this.casilla6.addActionListener(this);
+		this.casilla7.addActionListener(this);
+		this.casilla8.addActionListener(this);
+		this.casilla9.addActionListener(this);
+		this.casilla10.addActionListener(this);
+		this.casilla11.addActionListener(this);
+		this.casilla12.addActionListener(this);
+		this.casilla13.addActionListener(this);
+		this.casilla14.addActionListener(this);
+		this.casilla15.addActionListener(this);
+		this.casilla16.addActionListener(this);
+		this.casilla17.addActionListener(this);
+		this.casilla18.addActionListener(this);
+		this.casilla19.addActionListener(this);
+		this.casilla20.addActionListener(this);
+		this.casilla21.addActionListener(this);
+		this.casilla22.addActionListener(this);
+		this.casilla23.addActionListener(this);
+		this.casilla24.addActionListener(this);
+		this.casilla25.addActionListener(this);
+		this.casilla26.addActionListener(this);
+		this.casilla27.addActionListener(this);
 
 		this.setLayout(null);
 		//Primer Tablero
@@ -135,34 +158,6 @@ public class PanelGato extends JPanel implements ActionListener{
 		this.casilla25.setBounds(570,170,50,50);
 		this.casilla26.setBounds(630,170,50,50);
 		this.casilla27.setBounds(690,170,50,50);
-		//ActionListener
-		this.casilla1.addActionListener(this);
-		this.casilla2.addActionListener(this);
-		this.casilla3.addActionListener(this);
-		this.casilla4.addActionListener(this);
-		this.casilla5.addActionListener(this);
-		this.casilla6.addActionListener(this);
-		this.casilla7.addActionListener(this);
-		this.casilla8.addActionListener(this);
-		this.casilla9.addActionListener(this);
-		this.casilla10.addActionListener(this);
-		this.casilla11.addActionListener(this);
-		this.casilla12.addActionListener(this);
-		this.casilla13.addActionListener(this);
-		this.casilla14.addActionListener(this);
-		this.casilla15.addActionListener(this);
-		this.casilla16.addActionListener(this);
-		this.casilla17.addActionListener(this);
-		this.casilla18.addActionListener(this);
-		this.casilla19.addActionListener(this);
-		this.casilla20.addActionListener(this);
-		this.casilla21.addActionListener(this);
-		this.casilla22.addActionListener(this);
-		this.casilla23.addActionListener(this);
-		this.casilla24.addActionListener(this);
-		this.casilla25.addActionListener(this);
-		this.casilla26.addActionListener(this);
-		this.casilla27.addActionListener(this);
 		//Adders
 		this.add(this.casilla1);
 		this.add(this.casilla2);
@@ -191,138 +186,15 @@ public class PanelGato extends JPanel implements ActionListener{
 		this.add(this.casilla25);
 		this.add(this.casilla26);
 		this.add(this.casilla27);
-
-		JToggleButton prueba = new JToggleButton("");
-		//prueba.setLayout(new GridLayout());
-		prueba.setBounds(0, 0, 50, 50);
-		this.add(prueba);
 	}
-	public boolean gano(){
-		for(int i=0; i<3;i++){ 
-			for(int j=0;j<3;j++){
-				//checa verticalmente
-				if(this.casillas[i][0][j].getDisponible()== false && this.casillas[i][1][j].getDisponible()==false && this.casillas[i][2][j].getDisponible()==false){
-					if(this.casillas[i][0][j].getValor() == this.casillas[i][1][j].getValor() && this.casillas[i][0][j].getValor()== this.casillas[i][2][j].getValor()){
-						if(this.casillas[i][0][j].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
 
-					}
-				}
-				//Checa horizontalmente
-				else if(this.casillas[0][i][j].getDisponible()== false && this.casillas[1][i][j].getDisponible()==false&& this.casillas[2][i][j].getDisponible()==false){
-					if(this.casillas[0][i][j].getValor()== this.casillas[1][i][j].getValor()&& this.casillas[0][i][j].getValor()== this.casillas[2][i][j].getValor()){
-						if(this.casillas[0][i][j].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
-
-					}
-				}
-				//Checa en tercera dimencion
-
-				else if(this.casillas[i][j][0].getDisponible()==false && this.casillas[i][j][1].getDisponible()==false&& this.casillas[i][j][2].getDisponible()==false){
-					if(this.casillas[i][j][0].getValor()== this.casillas[i][j][1].getValor()&& this.casillas[i][j][0].getValor()== this.casillas[i][j][2].getValor()){
-						if(this.casillas[i][j][0].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
-					}
-				}
-				//Checa diagonal izquierda superior a derecha inferior
-				else if(this.casillas[0][0][i].getDisponible()==false&& this.casillas[1][1][i].getDisponible()==false && this.casillas[2][2][i].getDisponible()==false){
-					if(this.casillas[0][0][i].getValor()== this.casillas[1][1][i].getValor()&& this.casillas[0][0][i].getValor()== this.casillas[2][2][i].getValor()){
-						if(this.casillas[0][0][i].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
-					}
-				}
-				//Checa diagonal derecha superior a izquierda inferior
-				else if(this.casillas[2][0][i].getDisponible() ==false&& this.casillas[1][1][i].getDisponible()==false && this.casillas[0][2][i].getDisponible()==false){
-					if(this.casillas[2][0][i].getValor() == this.casillas[1][1][i].getValor()&& this.casillas[2][0][i].getValor() == this.casillas[0][2][i].getValor()){
-						if(this.casillas[2][0][i].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
-					}
-				}
-				//Checa horizontal de forma tridimensional
-				else if (this.casillas[0][i][0].getDisponible()==false&& this.casillas[1][i][1].getDisponible()==false && this.casillas[2][i][2].getDisponible()==false){
-					if (this.casillas[0][i][0].getValor()== this.casillas[1][i][1].getValor()&& this.casillas[0][i][0].getValor()== this.casillas[2][i][2].getValor()){
-						if(this.casillas[0][i][0].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
-					}
-				}
-				//Checa vertical de forma tridimensional
-				else if(this.casillas[i][0][0].getDisponible()==false && this.casillas[i][1][1].getDisponible()==false && this.casillas[i][2][2].getDisponible()==false){
-					if(this.casillas[i][0][0].getValor()== this.casillas[i][1][1].getValor() && this.casillas[i][0][0].getValor()== this.casillas[i][2][2].getValor()){
-						if(this.casillas[i][0][0].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
-					}
-				}
-				//Checa diagonal derecha superior a izquierda inferior de forma tridimencional
-				else if(this.casillas[2][0][0].getDisponible()==false&& this.casillas[1][1][1].getDisponible()==false && this.casillas[0][2][2].getDisponible()==false){
-					if(this.casillas[2][0][0].getValor()== this.casillas[1][1][1].getValor() && this.casillas[2][0][0].getValor()== this.casillas[0][2][2].getValor()){
-						if(this.casillas[2][0][0].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
-					}
-				}
-				//Checa diagonal izquierda superior a derecha inferior de forma tridimencional
-				else if(this.casillas[0][0][0].getDisponible()==false && this.casillas[1][1][1].getDisponible()==false&& this.casillas[2][2][2].getDisponible()==false){
-					if(this.casillas[0][0][0].getValor()== this.casillas[1][1][1].getValor()&& this.casillas[1][1][1].getValor()== this.casillas[2][2][2].getValor()){
-						if(this.casillas[0][0][0].getValor()==true){
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 2(X)!");
-						}else{
-							JOptionPane.showMessageDialog(null, "°Gana el Jugador 1(O)!");
-						}
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
-	public boolean empate(){
-		if(this.turnosTotales >= 27){
-			JOptionPane.showMessageDialog(null, "°Han empatado!");
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-	
 	public void paintComponent(Graphics g){
 		/*
 		 * Antes de pintar cada componente se establecio que cada casilla mide 50x50
 		 * Las lineas tienen de grueso 10px ya sea horizontal o vertical
 		 * Por conveniencia de aparencia, el "O" y "X" deberan de estar 10 px de diferencia en x & y 
 		 * Esto con el objetivo dee que no intercepten con las lineas del gato
-		 * Estos tambien tienen un tamaÒo de 30x30 pixeles
+		 * Estos tambien tienen un tamaÈö≥ de 30x30 pixeles
 		 */
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
@@ -352,479 +224,1354 @@ public class PanelGato extends JPanel implements ActionListener{
 
 	}
 
-	public boolean pedirCoordenada(){
-	do{
-		int numTurno=1;
-		String jugada=null;
-
-		try{
-			do{
-				try{
-					if(numTurno == 2){
-						numTurno=1;
-						//jugada = JOptionPane.showInputDialog("Turno: "+turnosTotales+" | Jugador 2(X): Inserte las coordenadas donde deseas lanzar la jugada");
-					}
-					else{
-						//jugada = JOptionPane.showInputDialog("Turno: "+turnosTotales+" | Jugador 1(O): Inserte las coordenadas donde deseas lanzar la jugada");
-						numTurno=2;
-					}
-					this.coordenada = new StringTokenizer(jugada);
-					this.ejeX = Integer.valueOf(this.coordenada.nextToken()) - 1; // -1 porque para el jugador las coordenadas que inserte el jugador son 1,2 o 3
-					this.ejeY = Integer.valueOf(this.coordenada.nextToken()) - 1;   // pero en el arrego solo hay posiciones 0,1 y 2
-					this.ejeZ = Integer.valueOf(this.coordenada.nextToken()) - 1;
-					this.totalEjes = ejeX+ejeY+ejeZ; //Para evitar que salga fuera del rango de ejes y asÌ evitar hacer un largo if, el maximo es 6 ya que 2+2+2
-
-					if(this.casillas[ejeX][ejeY][ejeZ].getDisponible()==true){
-						if(numTurno ==2){
-							this.casillas[ejeX][ejeY][ejeZ].setValor(Casilla.X);
-							
-
-							this.casillas[ejeX][ejeY][ejeZ].setDisponible(false);
-						}
-						else{
-							this.casillas[ejeX][ejeY][ejeZ].setValor(Casilla.O);
-							this.casillas[ejeX][ejeY][ejeZ].setDisponible(false);
-						}
-						
-					}
-					else{
-						if(numTurno ==2){
-							numTurno=1;
-						}
-						else{
-							numTurno=2;
-						}
-						JOptionPane.showMessageDialog(null, "La casilla esta ocupada, inserte otra porfavor");
-						this.turnosTotales=this.exceptionTurnos;
-					}
-
-				}
-				catch(NoSuchElementException e){
-					if(numTurno ==2){
-						numTurno=1;
-					}
-					else{
-						numTurno=2;
-					}
-					this.turnosTotales=this.exceptionTurnos;
-					JOptionPane.showMessageDialog(null,"Por favor inserte 3 coordenadas separadas por un espacio. Ej: x y z ");
-				}catch(NumberFormatException ex){
-					if(numTurno ==2){
-						numTurno=1;
-					}
-					else{
-						numTurno=2;
-					}
-					this.turnosTotales=this.exceptionTurnos;
-					JOptionPane.showMessageDialog(null,"Por favor inserte 3 numeros y no letras ");
-				}catch(ArrayIndexOutOfBoundsException ez){
-					if(numTurno ==2){
-						numTurno=1;
-					}
-					else{
-						numTurno=2;
-					}
-					this.turnosTotales=this.exceptionTurnos;
-					JOptionPane.showMessageDialog(null, "Inserte un numero del 1 al 3");
-				}
-				if(empate()==true){ //al llamar el metodo dentro del if se ejecuta cuando se cumpla la condicion
-					int newGame= JOptionPane.showConfirmDialog(null, "øJugar otra vez?");
-					if(newGame==JOptionPane.YES_OPTION){	//Se reinicia el juego y sus variables
-						this.reiniciar=true;
-						this.totalEjes=0;
-						this.casillas=new Casilla[3][3][3];	//Se crea un nuevo tablero para volver a jugar
-						this.turnosTotales=1;
-						this.exceptionTurnos=0;
-						for(int i=0; i<3; i++){		//Se crea cada parte del tablero
-							for(int j=0; j<3; j++){
-								for(int k=0; k<3; k++){
-									this.casillas[i][j][k]=new Casilla(); 
-								}
-							}
-						}
-					}
-					else{
-						this.setVisible(false);
-						//this.dispose();
-						this.reiniciar=false;
-					}
-					break;
-				}
-				else if(gano()==true){
-					int newGame= JOptionPane.showConfirmDialog(null, "øJugar otra vez?");
-					if(newGame==JOptionPane.YES_OPTION){	//Se reinicia el juego y sus variables
-						this.reiniciar=true;
-						this.totalEjes=0;
-						this.casillas=new Casilla[3][3][3];	//Se crea un nuevo tablero para volver a jugar
-						this.turnosTotales=1;
-						this.exceptionTurnos=0;
-						for(int i=0; i<3; i++){		//Se crea cada parte del tablero
-							for(int j=0; j<3; j++){
-								for(int k=0; k<3; k++){
-									this.casillas[i][j][k]=new Casilla(); 
-									
-								}
-							}
-						}
-					}
-					else{
-						this.setVisible(false);
-						//this.dispose();
-						this.reiniciar=false;
-					}
-					break;
-				}
-
-				this.exceptionTurnos=this.turnosTotales;
-				this.turnosTotales++;
-
-			}while((this.totalEjes>=0 || this.totalEjes < 7));
-
-		}catch(NullPointerException e){
-			if(numTurno ==2){ //el else hace unTurno==2 por eso si cancela tecnicamente esta perdiendo jugador 1
-				JOptionPane.showMessageDialog(null,"El jugador 1 se ha rendido °Gana el jugador 2!");
-//				this.setVisible(false);
-//				this.dispose();
-				return false;
-			}
-			else{
-				JOptionPane.showMessageDialog(null, "El jugador 2 se ha rendido °Gana el jugador 1!");
-//				this.setVisible(false);
-//				this.dispose();
-				return false;
-			}
-		}
-	}while(this.reiniciar);
-	return false;
-}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		boolean firstWin=false;
+		boolean secondWin=false;
+		int gameOver = 0;
 		if((e.getSource() == this.casilla1)&&(this.turno==1)&&(this.dis1==1)){
 			this.casilla1.setText("X");
+			this.val[0]="X";
+			if(this.val[0]=="X"&&this.val[1]=="X"&&this.val[2]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[3]=="X"&&this.val[6]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[4]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[9]=="X"&&this.val[18]=="X"){
+				firstWin=true;
+			}
+			try {
+				output.write(1);
+				System.out.println("Se envio 1");
+			} catch (IOException e1) {
+				System.out.println(e1);
+				e1.printStackTrace();
+			}
 			this.dis1=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla1)&&(this.turno==0)&&(this.dis1==1)){
 			this.casilla1.setText("O");
+			this.val[0]="O";
+			if(this.val[0]=="O"&&this.val[1]=="O"&&this.val[2]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[3]=="O"&&this.val[6]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[4]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[9]=="O"&&this.val[18]=="O"){
+				secondWin = true;
+			}
+			try {
+				output.write(0);
+				System.out.println("Se envio 1");
+			} catch (IOException e1) {
+				System.out.println(e1);
+				e1.printStackTrace();
+			}
 			this.dis1=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla2)&&(this.turno==1)&&(this.dis2==1)){
 			this.casilla2.setText("X");
+			this.val[1]="X";
+			if(this.val[0]=="X"&&this.val[1]=="X"&&this.val[2]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[1]=="X"&&this.val[4]=="X"&&this.val[7]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[1]=="X"&&this.val[10]=="X"&&this.val[19]=="X"){
+				firstWin=true;
+			}
 			this.dis2=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla2)&&(this.turno==0)&&(this.dis2==1)){
 			this.casilla2.setText("O");
+			this.val[1]="O";
+			if(this.val[0]=="O"&&this.val[1]=="O"&&this.val[2]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[1]=="O"&&this.val[4]=="O"&&this.val[7]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[1]=="O"&&this.val[10]=="O"&&this.val[19]=="O"){
+				secondWin = true;
+			}
 			this.dis2=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla3)&&(this.turno==1)&&(this.dis3==1)){
 			this.casilla3.setText("X");
+			this.val[2]="X";
+			if(this.val[0]=="X"&&this.val[1]=="X"&&this.val[2]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[5]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[4]=="X"&&this.val[6]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[11]=="X"&&this.val[20]=="X"){
+				firstWin=true;
+			}
 			this.dis3=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla3)&&(this.turno==0)&&(this.dis3==1)){
 			this.casilla3.setText("O");
+			this.val[2]="O";
+			if(this.val[0]=="O"&&this.val[1]=="O"&&this.val[2]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[5]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[4]=="O"&&this.val[6]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[11]=="O"&&this.val[20]=="O"){
+				secondWin = true;
+			}
 			this.dis3=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla4)&&(this.turno==1)&&(this.dis4==1)){
 			this.casilla4.setText("X");
+			this.val[3]="X";
+			if(this.val[3]=="X"&&this.val[4]=="X"&&this.val[5]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[3]=="X"&&this.val[6]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[3]=="X"&&this.val[12]=="X"&&this.val[21]=="X"){
+				firstWin=true;
+			}
 			this.dis4=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla4)&&(this.turno==0)&&(this.dis4==1)){
 			this.casilla4.setText("O");
+			this.val[3]="O";
+			if(this.val[3]=="O"&&this.val[4]=="O"&&this.val[5]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[3]=="O"&&this.val[6]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[3]=="O"&&this.val[12]=="O"&&this.val[21]=="O"){
+				secondWin = true;
+			}
 			this.dis4=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla5)&&(this.turno==1)&&(this.dis5==1)){
 			this.casilla5.setText("X");
+			this.val[4]="X";
+			if(this.val[3]=="X"&&this.val[4]=="X"&&this.val[5]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[1]=="X"&&this.val[4]=="X"&&this.val[7]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[4]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[4]=="X"&&this.val[6]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[4]=="X"&&this.val[13]=="X"&&this.val[22]=="X"){
+				firstWin=true;
+			}
 			this.dis5=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla5)&&(this.turno==0)&&(this.dis5==1)){
 			this.casilla5.setText("O");
+			this.val[4]="O";
+			if(this.val[3]=="O"&&this.val[4]=="O"&&this.val[5]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[1]=="O"&&this.val[4]=="O"&&this.val[7]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[4]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[4]=="O"&&this.val[6]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[4]=="O"&&this.val[13]=="O"&&this.val[22]=="O"){
+				secondWin = true;
+			}
 			this.dis5=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla6)&&(this.turno==1)&&(this.dis6==1)){
 			this.casilla6.setText("X");
+			this.val[5]="X";
+			if(this.val[3]=="X"&&this.val[4]=="X"&&this.val[5]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[5]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[5]=="X"&&this.val[14]=="X"&&this.val[23]=="X"){
+				firstWin=true;
+			}
 			this.dis6=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla6)&&(this.turno==0)&&(this.dis6==1)){
 			this.casilla6.setText("O");
+			this.val[5]="O";
+			if(this.val[3]=="O"&&this.val[4]=="O"&&this.val[5]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[5]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[5]=="O"&&this.val[14]=="O"&&this.val[23]=="O"){
+				secondWin = true;
+			}
 			this.dis6=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla7)&&(this.turno==1)&&(this.dis7==1)){
 			this.casilla7.setText("X");
+			this.val[6]="X";
+			if(this.val[6]=="X"&&this.val[7]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[3]=="X"&&this.val[6]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[4]=="X"&&this.val[6]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[6]=="X"&&this.val[15]=="X"&&this.val[24]=="X"){
+				firstWin=true;
+			}
 			this.dis7=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla7)&&(this.turno==0)&&(this.dis7==1)){
 			this.casilla7.setText("O");
+			this.val[6]="O";
+			if(this.val[6]=="O"&&this.val[7]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[3]=="O"&&this.val[6]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[4]=="O"&&this.val[6]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[6]=="O"&&this.val[15]=="O"&&this.val[24]=="O"){
+				secondWin = true;
+			}
 			this.dis7=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla8)&&(this.turno==1)&&(this.dis8==1)){
 			this.casilla8.setText("X");
+			this.val[7]="X";
+			if(this.val[6]=="X"&&this.val[7]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[1]=="X"&&this.val[4]=="X"&&this.val[7]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[7]=="X"&&this.val[16]=="X"&&this.val[25]=="X"){
+				firstWin=true;
+			}
 			this.dis8=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla8)&&(this.turno==0)&&(this.dis8==1)){
 			this.casilla8.setText("O");
+			this.val[7]="O";
+			if(this.val[6]=="O"&&this.val[7]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[1]=="O"&&this.val[4]=="O"&&this.val[7]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[7]=="O"&&this.val[16]=="O"&&this.val[25]=="O"){
+				secondWin = true;
+			}
 			this.dis8=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla9)&&(this.turno==1)&&(this.dis9==1)){
 			this.casilla9.setText("X");
+			this.val[8]="X";
+			if(this.val[6]=="X"&&this.val[7]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[5]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[4]=="X"&&this.val[8]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[8]=="X"&&this.val[17]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
 			this.dis9=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla9)&&(this.turno==0)&&(this.dis9==1)){
 			this.casilla9.setText("O");
+			this.val[8]="O";
+			if(this.val[6]=="O"&&this.val[7]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[5]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[4]=="O"&&this.val[8]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[8]=="O"&&this.val[17]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
 			this.dis9=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla10)&&(this.turno==1)&&(this.dis10==1)){
 			this.casilla10.setText("X");
+			this.val[9]="X";
+			if(this.val[9]=="X"&&this.val[10]=="X"&&this.val[11]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[9]=="X"&&this.val[12]=="X"&&this.val[15]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[9]=="X"&&this.val[13]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[9]=="X"&&this.val[18]=="X"){
+				firstWin=true;
+			}
 			this.dis10=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla10)&&(this.turno==0)&&(this.dis10==1)){
 			this.casilla10.setText("O");
+			this.val[9]="O";
+			if(this.val[9]=="O"&&this.val[10]=="O"&&this.val[11]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[9]=="O"&&this.val[12]=="O"&&this.val[15]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[9]=="O"&&this.val[13]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[9]=="O"&&this.val[18]=="O"){
+				secondWin = true;
+			}
 			this.dis10=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla11)&&(this.turno==1)&&(this.dis11==1)){
 			this.casilla11.setText("X");
+			this.val[10]="X";
+			if(this.val[9]=="X"&&this.val[10]=="X"&&this.val[11]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[10]=="X"&&this.val[13]=="X"&&this.val[16]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[1]=="X"&&this.val[10]=="X"&&this.val[19]=="X"){
+				firstWin=true;
+			}
 			this.dis11=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla11)&&(this.turno==0)&&(this.dis11==1)){
 			this.casilla11.setText("O");
+			this.val[10]="O";
+			if(this.val[9]=="O"&&this.val[10]=="O"&&this.val[11]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[10]=="O"&&this.val[13]=="O"&&this.val[16]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[1]=="O"&&this.val[10]=="O"&&this.val[19]=="O"){
+				secondWin = true;
+			}
 			this.dis11=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla12)&&(this.turno==1)&&(this.dis12==1)){
 			this.casilla12.setText("X");
+			this.val[11]="X";
+			if(this.val[9]=="X"&&this.val[10]=="X"&&this.val[11]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[11]=="X"&&this.val[14]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[11]=="X"&&this.val[13]=="X"&&this.val[15]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[11]=="X"&&this.val[20]=="X"){
+				firstWin=true;
+			}
 			this.dis12=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla12)&&(this.turno==0)&&(this.dis12==1)){
 			this.casilla12.setText("O");
+			this.val[11]="O";
+			if(this.val[9]=="O"&&this.val[10]=="O"&&this.val[11]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[11]=="O"&&this.val[14]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[11]=="O"&&this.val[13]=="O"&&this.val[15]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[11]=="O"&&this.val[20]=="O"){
+				secondWin = true;
+			}
 			this.dis12=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla13)&&(this.turno==1)&&(this.dis13==1)){
 			this.casilla13.setText("X");
+			this.val[12]="X";
+			if(this.val[12]=="X"&&this.val[13]=="X"&&this.val[14]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[9]=="X"&&this.val[12]=="X"&&this.val[15]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[3]=="X"&&this.val[12]=="X"&&this.val[21]=="X"){
+				firstWin=true;
+			}
 			this.dis13=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla13)&&(this.turno==0)&&(this.dis13==1)){
 			this.casilla13.setText("O");
+			this.val[12]="O";
+			if(this.val[12]=="O"&&this.val[13]=="O"&&this.val[14]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[9]=="O"&&this.val[12]=="O"&&this.val[15]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[3]=="O"&&this.val[12]=="O"&&this.val[21]=="O"){
+				secondWin = true;
+			}
 			this.dis13=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla14)&&(this.turno==1)&&(this.dis14==1)){
 			this.dis14=0;
+			this.val[13]="X";
+			if(this.val[12]=="X"&&this.val[13]=="X"&&this.val[14]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[10]=="X"&&this.val[13]=="X"&&this.val[16]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[9]=="X"&&this.val[13]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[11]=="X"&&this.val[13]=="X"&&this.val[15]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[4]=="X"&&this.val[13]=="X"&&this.val[22]=="X"){
+				firstWin=true;
+			}
 			this.casilla14.setText("X");
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla14)&&(this.turno==0)&&(this.dis14==1)){
 			this.casilla14.setText("O");
+			this.val[13]="O";
+			if(this.val[12]=="O"&&this.val[13]=="O"&&this.val[14]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[10]=="O"&&this.val[13]=="O"&&this.val[16]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[9]=="O"&&this.val[13]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[11]=="O"&&this.val[13]=="O"&&this.val[15]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[4]=="O"&&this.val[13]=="O"&&this.val[22]=="O"){
+				secondWin = true;
+			}
 			this.dis14=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla15)&&(this.turno==1)&&(this.dis15==1)){
 			this.casilla15.setText("X");
+			this.val[14]="X";
+			if(this.val[12]=="X"&&this.val[13]=="X"&&this.val[14]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[11]=="X"&&this.val[14]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[5]=="X"&&this.val[14]=="X"&&this.val[23]=="X"){
+				firstWin=true;
+			}
 			this.dis15=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla15)&&(this.turno==0)&&(this.dis15==1)){
 			this.casilla15.setText("O");
+			this.val[14]="O";
+			if(this.val[12]=="O"&&this.val[13]=="O"&&this.val[14]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[11]=="O"&&this.val[14]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[5]=="O"&&this.val[14]=="O"&&this.val[23]=="O"){
+				secondWin = true;
+			}
 			this.dis15=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla16)&&(this.turno==1)&&(this.dis16==1)){
 			this.casilla16.setText("X");
+			this.val[15]="X";
+			if(this.val[15]=="X"&&this.val[16]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[9]=="X"&&this.val[12]=="X"&&this.val[15]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[11]=="X"&&this.val[13]=="X"&&this.val[15]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[6]=="X"&&this.val[15]=="X"&&this.val[24]=="X"){
+				firstWin=true;
+			}
 			this.dis16=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla16)&&(this.turno==0)&&(this.dis16==1)){
 			this.casilla16.setText("O");
+			this.val[15]="O";
+			if(this.val[15]=="O"&&this.val[16]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[9]=="O"&&this.val[12]=="O"&&this.val[15]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[11]=="O"&&this.val[13]=="O"&&this.val[15]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[6]=="O"&&this.val[15]=="O"&&this.val[24]=="O"){
+				secondWin = true;
+			}
 			this.dis16=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla17)&&(this.turno==1)&&(this.dis17==1)){
 			this.casilla17.setText("X");
+			this.val[16]="X";
+			if(this.val[15]=="X"&&this.val[16]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[10]=="X"&&this.val[13]=="X"&&this.val[16]=="X"){
+				firstWin=true;
+			}
 			this.dis17=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla17)&&(this.turno==0)&&(this.dis17==1)){
 			this.casilla17.setText("O");
+			this.val[16]="O";
+			if(this.val[15]=="O"&&this.val[16]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[10]=="O"&&this.val[13]=="O"&&this.val[16]=="O"){
+				secondWin = true;
+			}
 			this.dis17=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla18)&&(this.turno==1)&&(this.dis18==1)){
 			this.casilla18.setText("X");
+			this.val[17]="X";
+			if(this.val[15]=="X"&&this.val[16]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[11]=="X"&&this.val[14]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[9]=="X"&&this.val[13]=="X"&&this.val[17]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[7]=="X"&&this.val[16]=="X"&&this.val[25]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[8]=="X"&&this.val[17]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
 			this.dis18=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla18)&&(this.turno==0)&&(this.dis18==1)){
 			this.casilla18.setText("O");
+			this.val[17]="O";
+			if(this.val[15]=="O"&&this.val[16]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[11]=="O"&&this.val[14]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[9]=="O"&&this.val[13]=="O"&&this.val[17]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[7]=="O"&&this.val[16]=="O"&&this.val[25]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[8]=="O"&&this.val[17]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
 			this.dis18=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla19)&&(this.turno==1)&&(this.dis19==1)){
 			this.casilla19.setText("X");
+			this.val[18]="X";
+			if(this.val[18]=="X"&&this.val[19]=="X"&&this.val[20]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[18]=="X"&&this.val[21]=="X"&&this.val[24]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[18]=="X"&&this.val[22]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[0]=="X"&&this.val[9]=="X"&&this.val[18]=="X"){
+				firstWin=true;
+			}
 			this.dis19=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla19)&&(this.turno==0)&&(this.dis19==1)){
 			this.dis19=0;
+			this.val[18]="O";
+			if(this.val[18]=="O"&&this.val[19]=="O"&&this.val[20]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[18]=="O"&&this.val[21]=="O"&&this.val[24]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[0]=="O"&&this.val[9]=="O"&&this.val[18]=="O"){
+				secondWin = true;
+			}
 			this.casilla19.setText("O");
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla20)&&(this.turno==1)&&(this.dis20==1)){
 			this.casilla20.setText("X");
+			this.val[19]="X";
+			if(this.val[18]=="X"&&this.val[19]=="X"&&this.val[20]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[19]=="X"&&this.val[22]=="X"&&this.val[25]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[1]=="X"&&this.val[10]=="X"&&this.val[19]=="X"){
+				firstWin=true;
+			}
 			this.dis20=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla20)&&(this.turno==0)&&(this.dis20==1)){
 			this.casilla20.setText("O");
+			this.val[19]="O";
+			if(this.val[18]=="O"&&this.val[19]=="O"&&this.val[20]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[19]=="O"&&this.val[22]=="O"&&this.val[25]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[1]=="O"&&this.val[10]=="O"&&this.val[19]=="O"){
+				secondWin = true;
+			}
 			this.dis20=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla21)&&(this.turno==1)&&(this.dis21==1)){
 			this.casilla21.setText("X");
+			this.val[20]="X";
+			if(this.val[18]=="X"&&this.val[19]=="X"&&this.val[20]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[20]=="X"&&this.val[23]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[20]=="X"&&this.val[22]=="X"&&this.val[24]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[2]=="X"&&this.val[11]=="X"&&this.val[20]=="X"){
+				firstWin=true;
+			}
 			this.dis21=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla21)&&(this.turno==0)&&(this.dis21==1)){
 			this.casilla21.setText("O");
+			this.val[20]="O";
+			if(this.val[18]=="O"&&this.val[19]=="O"&&this.val[20]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[20]=="O"&&this.val[23]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[20]=="O"&&this.val[22]=="O"&&this.val[24]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[2]=="O"&&this.val[11]=="O"&&this.val[20]=="O"){
+				secondWin = true;
+			}
 			this.dis21=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla22)&&(this.turno==1)&&(this.dis22==1)){
 			this.casilla22.setText("X");
+			this.val[21]="X";
+			if(this.val[21]=="X"&&this.val[22]=="X"&&this.val[23]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[18]=="X"&&this.val[21]=="X"&&this.val[24]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[3]=="X"&&this.val[12]=="X"&&this.val[21]=="X"){
+				firstWin=true;
+			}
 			this.dis22=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla22)&&(this.turno==0)&&(this.dis22==1)){
 			this.casilla22.setText("O");
+			this.val[21]="O";
 			this.dis22=0;
 			this.turno=1;
+			if(this.val[21]=="O"&&this.val[22]=="O"&&this.val[23]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[18]=="O"&&this.val[21]=="O"&&this.val[24]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[3]=="O"&&this.val[12]=="O"&&this.val[21]=="O"){
+				secondWin = true;
+			}
 			repaint();
 		}
 		if((e.getSource() == this.casilla23)&&(this.turno==1)&&(this.dis23==1)){
 			this.casilla23.setText("X");
+			this.val[22]="X";
+			if(this.val[21]=="X"&&this.val[22]=="X"&&this.val[23]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[19]=="X"&&this.val[22]=="X"&&this.val[25]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[18]=="X"&&this.val[22]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[18]=="X"&&this.val[22]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[4]=="X"&&this.val[13]=="X"&&this.val[22]=="X"){
+				firstWin=true;
+			}
 			this.dis23=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla23)&&(this.turno==0)&&(this.dis23==1)){
 			this.casilla23.setText("O");
+			this.val[22]="O";
+			if(this.val[21]=="O"&&this.val[22]=="O"&&this.val[23]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[19]=="O"&&this.val[22]=="O"&&this.val[25]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[4]=="O"&&this.val[13]=="O"&&this.val[22]=="O"){
+				secondWin = true;
+			}
 			this.dis23=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla24)&&(this.turno==1)&&(this.dis24==1)){
 			this.casilla24.setText("X");
+			this.val[23]="X";
+			if(this.val[21]=="X"&&this.val[22]=="X"&&this.val[23]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[20]=="X"&&this.val[23]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[5]=="X"&&this.val[14]=="X"&&this.val[23]=="X"){
+				firstWin=true;
+			}
 			this.dis24=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla24)&&(this.turno==0)&&(this.dis24==1)){
 			this.casilla24.setText("O");
+			this.val[23]="O";
+			if(this.val[21]=="O"&&this.val[22]=="O"&&this.val[23]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[20]=="O"&&this.val[23]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[5]=="O"&&this.val[14]=="O"&&this.val[23]=="O"){
+				secondWin = true;
+			}
 			this.dis24=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla25)&&(this.turno==1)&&(this.dis25==1)){
 			this.casilla25.setText("X");
+			this.val[24]="X";
+			if(this.val[24]=="X"&&this.val[25]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[18]=="X"&&this.val[21]=="X"&&this.val[24]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[18]=="X"&&this.val[22]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[6]=="X"&&this.val[15]=="X"&&this.val[24]=="X"){
+				firstWin=true;
+			}
 			this.dis25=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla25)&&(this.turno==0)&&(this.dis25==1)){
 			this.casilla25.setText("O");
+			this.val[24]="O";
+			if(this.val[24]=="O"&&this.val[25]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[18]=="O"&&this.val[21]=="O"&&this.val[24]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[6]=="O"&&this.val[15]=="O"&&this.val[24]=="O"){
+				secondWin = true;
+			}
 			this.dis25=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla26)&&(this.turno==1)&&(this.dis26==1)){
 			this.casilla26.setText("X");
+			this.val[25]="X";
+			if(this.val[21]=="X"&&this.val[22]=="X"&&this.val[23]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[19]=="X"&&this.val[22]=="X"&&this.val[25]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[7]=="X"&&this.val[16]=="X"&&this.val[25]=="X"){
+				firstWin=true;
+			}
 			this.dis26=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla26)&&(this.turno==0)&&(this.dis26==1)){
 			this.casilla26.setText("O");
+			this.val[25]="O";
+			if(this.val[21]=="O"&&this.val[22]=="O"&&this.val[23]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[19]=="O"&&this.val[22]=="O"&&this.val[25]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[7]=="O"&&this.val[16]=="O"&&this.val[25]=="O"){
+				secondWin = true;
+			}
 			this.dis26=0;
 			this.turno=1;
 			repaint();
 		}
 		if((e.getSource() == this.casilla27)&&(this.turno==1)&&(this.dis27==1)){
 			this.casilla27.setText("X");
+			this.val[26]="X";
+			if(this.val[21]=="X"&&this.val[22]=="X"&&this.val[23]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[20]=="X"&&this.val[23]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[18]=="X"&&this.val[22]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
+			else if(this.val[8]=="X"&&this.val[17]=="X"&&this.val[26]=="X"){
+				firstWin=true;
+			}
 			this.dis27=0;
 			this.turno=0;
 			repaint();
 		}
 		else if((e.getSource()==this.casilla27)&&(this.turno==0)&&(this.dis27==1)){
 			this.casilla27.setText("O");
+			this.val[26]="O";
+			if(this.val[21]=="O"&&this.val[22]=="X"&&this.val[23]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[20]=="O"&&this.val[23]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
+			else if(this.val[8]=="O"&&this.val[17]=="O"&&this.val[26]=="O"){
+				secondWin = true;
+			}
 			this.dis27=0;
 			this.turno=1;
 			repaint();
 		}
+		if(this.GameMac==JOptionPane.YES_OPTION){
+			if(this.turno==0){
+				int n=0;
+				while(n==0){
+					int randomInt = 0;
+					Random randomGenerator = new Random();
+					while(randomInt == 0){
+						randomInt = randomGenerator.nextInt(28);
+					}
+					if((randomInt == 1)&&(this.dis1==1)){
+						this.casilla1.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 2)&&(this.dis2==1)){
+						this.casilla2.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 3)&&(this.dis3==1)){
+						this.casilla3.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 4)&&(this.dis4==1)){
+						this.casilla4.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 5)&&(this.dis5==1)){
+						this.casilla5.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 6)&&(this.dis6==1)){
+						this.casilla6.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 7)&&(this.dis7==1)){
+						this.casilla7.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 8)&&(this.dis8==1)){
+						this.casilla8.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 9)&&(this.dis9==1)){
+						this.casilla9.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 10)&&(this.dis10==1)){
+						this.casilla10.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 11)&&(this.dis11==1)){
+						this.casilla11.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 12)&&(this.dis12==1)){
+						this.casilla12.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 13)&&(this.dis13==1)){
+						this.casilla13.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 14)&&(this.dis14==1)){
+						this.casilla14.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 15)&&(this.dis15==1)){
+						this.casilla15.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 16)&&(this.dis16==1)){
+						this.casilla16.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 17)&&(this.dis17==1)){
+						this.casilla17.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 18)&&(this.dis18==1)){
+						this.casilla18.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 19)&&(this.dis19==1)){
+						this.casilla19.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 20)&&(this.dis20==1)){
+						this.casilla20.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 21)&&(this.dis21==1)){
+						this.casilla21.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 22)&&(this.dis22==1)){
+						this.casilla22.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 23)&&(this.dis23==1)){
+						this.casilla23.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 24)&&(this.dis24==1)){
+						this.casilla24.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 25)&&(this.dis25==1)){
+						this.casilla25.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 26)&&(this.dis26==1)){
+						this.casilla26.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+					if((randomInt == 27)&&(this.dis27==1)){
+						this.casilla27.setText("O");
+						this.turno=1;
+						n+=1;
+					}
+
+				}
 
 
+			}
+
+			if(firstWin){
+				gameOver = JOptionPane.showConfirmDialog(null, "El Jugador 1(X) ha ganado ¬øJugar otra vez?");
+				if(gameOver==JOptionPane.YES_OPTION){
+					this.val = new String[27];
+					this.casilla1.setText("");
+					this.dis1=1;
+					this.casilla2.setText("");
+					this.dis2=1;
+
+					this.casilla2.setText("");
+					this.dis3=1;
+
+					this.casilla3.setText("");
+					this.dis3=1;
+
+					this.casilla4.setText("");
+					this.dis4=1;
+
+					this.casilla5.setText("");
+					this.dis5=1;
+
+					this.casilla6.setText("");
+					this.dis6=1;
+
+					this.casilla7.setText("");
+					this.dis7=1;
+
+					this.casilla8.setText("");
+					this.dis8=1;
+
+					this.casilla9.setText("");
+					this.dis9=1;
+
+					this.casilla10.setText("");
+					this.dis10=1;
+
+					this.casilla11.setText("");
+					this.dis11=1;
+
+					this.casilla12.setText("");
+					this.dis12=1;
+
+					this.casilla13.setText("");
+					this.dis13=1;
+
+					this.casilla14.setText("");
+					this.dis14=1;
+
+					this.casilla15.setText("");
+					this.dis15=1;
+
+					this.casilla16.setText("");
+					this.dis16=1;
+
+					this.casilla17.setText("");
+					this.dis17=1;
+
+					this.casilla18.setText("");
+					this.dis18=1;
+
+					this.casilla19.setText("");
+					this.dis19=1;
+
+					this.casilla20.setText("");
+					this.dis20=1;
+
+					this.casilla21.setText("");
+					this.dis21=1;
+
+					this.casilla23.setText("");
+					this.dis23=1;
+
+					this.casilla24.setText("");
+					this.dis24=1;
+
+					this.casilla25.setText("");
+					this.dis25=1;
+
+					this.casilla26.setText("");
+					this.dis26=1;
+
+					this.casilla27.setText("");
+					this.dis27=1;
+
+					this.turno=1;
+					firstWin=false;
+					secondWin=false;
+				}
+				else{
+					System.exit(0);
+				}
+			}
+			else if(secondWin){
+				gameOver = JOptionPane.showConfirmDialog(null, "El Jugador 2(O) ha ganado ¬øJugar otra vez?");
+				if(gameOver==JOptionPane.YES_OPTION){
+					this.val = new String[27];
+					this.casilla1.setText("");
+					this.dis1=1;
+
+					this.casilla2.setText("");
+					this.dis2=1;
+
+					this.casilla2.setText("");
+					this.dis3=1;
+
+					this.casilla3.setText("");
+					this.dis3=1;
+
+					this.casilla4.setText("");
+					this.dis4=1;
+
+					this.casilla5.setText("");
+					this.dis5=1;
+
+					this.casilla6.setText("");
+					this.dis6=1;
+
+					this.casilla7.setText("");
+					this.dis7=1;
+
+					this.casilla8.setText("");
+					this.dis8=1;
+
+					this.casilla9.setText("");
+					this.dis9=1;
+
+					this.casilla10.setText("");
+					this.dis10=1;
+
+					this.casilla11.setText("");
+					this.dis11=1;
+
+					this.casilla12.setText("");
+					this.dis12=1;
+
+					this.casilla13.setText("");
+					this.dis13=1;
+
+					this.casilla14.setText("");
+					this.dis14=1;
+
+					this.casilla15.setText("");
+					this.dis15=1;
+
+					this.casilla16.setText("");
+					this.dis16=1;
+
+					this.casilla17.setText("");
+					this.dis17=1;
+
+					this.casilla18.setText("");
+					this.dis18=1;
+
+					this.casilla19.setText("");
+					this.dis19=1;
+
+					this.casilla20.setText("");
+					this.dis20=1;
+
+					this.casilla21.setText("");
+					this.dis21=1;
+
+					this.casilla23.setText("");
+					this.dis23=1;
+
+					this.casilla24.setText("");
+					this.dis24=1;
+
+					this.casilla25.setText("");
+					this.dis25=1;
+
+					this.casilla26.setText("");
+					this.dis26=1;
+
+					this.casilla27.setText("");
+					this.dis27=1;
+
+					this.turno=1;
+					firstWin=false;
+					secondWin=false;
+				}
+				else{
+					System.exit(0);
+				}
+			}
+
+		}
 	}
-}
+
+	@Override
+	public void serialEvent(SerialPortEvent arg0) {
+		if (arg0.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+			try {
+				String inputLine=input.readLine();
+				//System.out.println("Lei de Arduino: "+inputLine);
+				if(inputLine.equals("1"))
+					this.encendido=true;
+				else
+				{
+					this.encendido=false;
+				}
+				repaint();
+			} catch (IOException e) {
+				//System.err.println("error en serialEvent: "+e);
+			}
+		}
+		
+	}
+} 	
