@@ -62,6 +62,7 @@ void setup() {
 void loop() {
   if(Serial.available() == 1){
     if(Serial.read()==HIGH){
+      delay(500);
       analogWrite(red,0);
       analogWrite(blue,255);
       Serial.println(1,DEC);
