@@ -5,7 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Enumeration;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -13,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
@@ -38,9 +41,9 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 	private OutputStream output;
 
 	private static final int TIME_OUT = 2000;	/** Milliseconds to block while waiting for port open */
-	private static final int DATA_RATE = 9600;
+	private static final int DATA_RATE = 9600; /** Default bits per second for COM port. */
 
-	private static final int GameMac = 0;  /** Default bits per second for COM port. */
+	private static final int GameMac = 0;  
 	private boolean encendido,
 	reiniciar;
 
@@ -52,10 +55,22 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 	ac16, ac17, ac18, ac19, ac20, ac21, ac22, ac23, ac24, ac25, ac26, ac27,turno,dis1,dis2,dis3,dis4,dis5,dis6,dis7,
 	dis8,dis9,dis10,dis11,dis12,dis13,dis14,dis15,dis16,dis17,dis18,dis19,dis20,dis21,dis22,dis23,dis24,dis25,dis26,dis27;
 
+	private int wes=0;
+	private int ans=6;
+
 	public PanelGato(){
 		super();
+		this.initialize();
 		this.setPreferredSize(new Dimension(800,300));
 		this.setBackground(Color.WHITE);
+		
+		try {
+			output.write(1);
+			System.out.println("Se envio 0");
+		} catch (IOException e1) {
+			System.out.println(e1);
+			e1.printStackTrace();
+		}
 		this.ac1=this.ac2=this.ac3=this.ac4=this.ac5=this.ac6=this.ac7=this.ac8=this.ac9=0;
 		this.ac10=this.ac11=this.ac12=this.ac13=this.ac14=this.ac15=this.ac16=this.ac17=this.ac18=0;
 		this.ac19=this.ac20=this.ac21=this.ac22=this.ac23=this.ac24=this.ac25=this.ac26=this.ac27=0;
@@ -186,6 +201,18 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 		this.add(this.casilla25);
 		this.add(this.casilla26);
 		this.add(this.casilla27);
+
+		if(wes==0){
+			int x=0;
+			while(x==0){
+				ans = Integer.parseInt(JOptionPane.showInputDialog("Quieres jugar contra maquina (1 = si, 2= no)"));
+				if((ans!=1)&&(ans!=2)){
+					int GameMac= JOptionPane.showConfirmDialog(null, "Escoje 1 o 2");
+				}
+				x+=1;
+			}
+		}
+
 	}
 
 	public void paintComponent(Graphics g){
@@ -194,7 +221,7 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 		 * Las lineas tienen de grueso 10px ya sea horizontal o vertical
 		 * Por conveniencia de aparencia, el "O" y "X" deberan de estar 10 px de diferencia en x & y 
 		 * Esto con el objetivo dee que no intercepten con las lineas del gato
-		 * Estos tambien tienen un tama隳 de 30x30 pixeles
+		 * Estos tambien tienen una dimension de 30x30 pixeles
 		 */
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
@@ -223,6 +250,36 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 
 
 	}
+	public void initialize() {
+		CommPortIdentifier portId = null;
+		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+		while (portEnum.hasMoreElements()) {
+			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+			if (currPortId.getName().equals(PORT_NAMES)) {
+				portId = currPortId;
+				break;
+			}
+		}
+		if (portId == null) {
+			System.out.println("Could not find COM port.");
+			return;
+		}
+
+		try {
+			// open serial port, and use class name for the appName.
+			serialPort = (SerialPort) portId.open(this.getClass().getName(),TIME_OUT);
+			// set port parameters
+			serialPort.setSerialPortParams(DATA_RATE,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+			// open the streams
+			input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+			output = serialPort.getOutputStream();
+			// add event listeners
+			//serialPort.addEventListener(this);
+			serialPort.notifyOnDataAvailable(true);
+		} catch (Exception e) {
+			System.err.println(e.toString());
+		}
+	}
 
 
 	@Override
@@ -230,6 +287,26 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 		boolean firstWin=false;
 		boolean secondWin=false;
 		int gameOver = 0;
+
+		if(this.turno==1){
+			try {
+				output.write(0);
+				System.out.println("Se envio 1");
+			} catch (IOException e1) {
+				System.out.println(e1);
+				e1.printStackTrace();
+			}
+		}
+		else{
+			try {
+				output.write(1);
+				System.out.println("Se envio 0");
+			} catch (IOException e1) {
+				System.out.println(e1);
+				e1.printStackTrace();
+			}
+			
+		}
 		if((e.getSource() == this.casilla1)&&(this.turno==1)&&(this.dis1==1)){
 			this.casilla1.setText("X");
 			this.val[0]="X";
@@ -244,13 +321,6 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 			}
 			else if(this.val[0]=="X"&&this.val[9]=="X"&&this.val[18]=="X"){
 				firstWin=true;
-			}
-			try {
-				output.write(1);
-				System.out.println("Se envio 1");
-			} catch (IOException e1) {
-				System.out.println(e1);
-				e1.printStackTrace();
 			}
 			this.dis1=0;
 			this.turno=0;
@@ -270,13 +340,6 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 			}
 			else if(this.val[0]=="O"&&this.val[9]=="O"&&this.val[18]=="O"){
 				secondWin = true;
-			}
-			try {
-				output.write(0);
-				System.out.println("Se envio 1");
-			} catch (IOException e1) {
-				System.out.println(e1);
-				e1.printStackTrace();
 			}
 			this.dis1=0;
 			this.turno=1;
@@ -1216,7 +1279,306 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 			this.turno=1;
 			repaint();
 		}
-		if(this.GameMac==JOptionPane.YES_OPTION){
+
+		if(this.val[0]=="O"&&this.val[1]=="O"&&this.val[2]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[3]=="O"&&this.val[6]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[4]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[9]=="O"&&this.val[18]=="O"){
+			secondWin = true;
+		}
+		if(this.val[0]=="O"&&this.val[1]=="O"&&this.val[2]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[1]=="O"&&this.val[4]=="O"&&this.val[7]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[1]=="O"&&this.val[10]=="O"&&this.val[19]=="O"){
+			secondWin = true;
+		}
+		if(this.val[0]=="O"&&this.val[1]=="O"&&this.val[2]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[5]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[4]=="O"&&this.val[6]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[11]=="O"&&this.val[20]=="O"){
+			secondWin = true;
+		}
+		if(this.val[3]=="O"&&this.val[4]=="O"&&this.val[5]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[3]=="O"&&this.val[6]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[3]=="O"&&this.val[12]=="O"&&this.val[21]=="O"){
+			secondWin = true;
+		}
+		if(this.val[3]=="O"&&this.val[4]=="O"&&this.val[5]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[1]=="O"&&this.val[4]=="O"&&this.val[7]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[4]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[4]=="O"&&this.val[6]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[4]=="O"&&this.val[13]=="O"&&this.val[22]=="O"){
+			secondWin = true;
+		}
+		if(this.val[3]=="O"&&this.val[4]=="O"&&this.val[5]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[5]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[5]=="O"&&this.val[14]=="O"&&this.val[23]=="O"){
+			secondWin = true;
+		}
+		if(this.val[6]=="O"&&this.val[7]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[3]=="O"&&this.val[6]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[4]=="O"&&this.val[6]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[6]=="O"&&this.val[15]=="O"&&this.val[24]=="O"){
+			secondWin = true;
+		}
+		if(this.val[6]=="O"&&this.val[7]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[1]=="O"&&this.val[4]=="O"&&this.val[7]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[7]=="O"&&this.val[16]=="O"&&this.val[25]=="O"){
+			secondWin = true;
+		}
+		if(this.val[6]=="O"&&this.val[7]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[5]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[4]=="O"&&this.val[8]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[8]=="O"&&this.val[17]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		if(this.val[9]=="O"&&this.val[10]=="O"&&this.val[11]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[9]=="O"&&this.val[12]=="O"&&this.val[15]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[9]=="O"&&this.val[13]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[9]=="O"&&this.val[18]=="O"){
+			secondWin = true;
+		}
+		if(this.val[9]=="O"&&this.val[10]=="O"&&this.val[11]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[10]=="O"&&this.val[13]=="O"&&this.val[16]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[1]=="O"&&this.val[10]=="O"&&this.val[19]=="O"){
+			secondWin = true;
+		}
+		if(this.val[9]=="O"&&this.val[10]=="O"&&this.val[11]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[11]=="O"&&this.val[14]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[11]=="O"&&this.val[13]=="O"&&this.val[15]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[11]=="O"&&this.val[20]=="O"){
+			secondWin = true;
+		}
+		if(this.val[12]=="O"&&this.val[13]=="O"&&this.val[14]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[9]=="O"&&this.val[12]=="O"&&this.val[15]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[3]=="O"&&this.val[12]=="O"&&this.val[21]=="O"){
+			secondWin = true;
+		}
+		if(this.val[12]=="O"&&this.val[13]=="O"&&this.val[14]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[10]=="O"&&this.val[13]=="O"&&this.val[16]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[9]=="O"&&this.val[13]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[11]=="O"&&this.val[13]=="O"&&this.val[15]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[4]=="O"&&this.val[13]=="O"&&this.val[22]=="O"){
+			secondWin = true;
+		}
+		if(this.val[12]=="O"&&this.val[13]=="O"&&this.val[14]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[11]=="O"&&this.val[14]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[5]=="O"&&this.val[14]=="O"&&this.val[23]=="O"){
+			secondWin = true;
+		}
+		if(this.val[15]=="O"&&this.val[16]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[9]=="O"&&this.val[12]=="O"&&this.val[15]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[11]=="O"&&this.val[13]=="O"&&this.val[15]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[6]=="O"&&this.val[15]=="O"&&this.val[24]=="O"){
+			secondWin = true;
+		}
+		if(this.val[15]=="O"&&this.val[16]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[10]=="O"&&this.val[13]=="O"&&this.val[16]=="O"){
+			secondWin = true;
+		}
+		if(this.val[15]=="O"&&this.val[16]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[11]=="O"&&this.val[14]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[9]=="O"&&this.val[13]=="O"&&this.val[17]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[7]=="O"&&this.val[16]=="O"&&this.val[25]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[8]=="O"&&this.val[17]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		if(this.val[18]=="O"&&this.val[19]=="O"&&this.val[20]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[18]=="O"&&this.val[21]=="O"&&this.val[24]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[0]=="O"&&this.val[9]=="O"&&this.val[18]=="O"){
+			secondWin = true;
+		}
+		if(this.val[18]=="O"&&this.val[19]=="O"&&this.val[20]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[19]=="O"&&this.val[22]=="O"&&this.val[25]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[1]=="O"&&this.val[10]=="O"&&this.val[19]=="O"){
+			secondWin = true;
+		}
+		if(this.val[18]=="O"&&this.val[19]=="O"&&this.val[20]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[20]=="O"&&this.val[23]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[20]=="O"&&this.val[22]=="O"&&this.val[24]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[2]=="O"&&this.val[11]=="O"&&this.val[20]=="O"){
+			secondWin = true;
+		}
+		if(this.val[21]=="O"&&this.val[22]=="O"&&this.val[23]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[18]=="O"&&this.val[21]=="O"&&this.val[24]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[3]=="O"&&this.val[12]=="O"&&this.val[21]=="O"){
+			secondWin = true;
+		}
+		if(this.val[21]=="O"&&this.val[22]=="O"&&this.val[23]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[19]=="O"&&this.val[22]=="O"&&this.val[25]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[4]=="O"&&this.val[13]=="O"&&this.val[22]=="O"){
+			secondWin = true;
+		}
+		if(this.val[21]=="O"&&this.val[22]=="O"&&this.val[23]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[20]=="O"&&this.val[23]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[5]=="O"&&this.val[14]=="O"&&this.val[23]=="O"){
+			secondWin = true;
+		}
+		if(this.val[24]=="O"&&this.val[25]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[18]=="O"&&this.val[21]=="O"&&this.val[24]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[6]=="O"&&this.val[15]=="O"&&this.val[24]=="O"){
+			secondWin = true;
+		}
+		if(this.val[21]=="O"&&this.val[22]=="O"&&this.val[23]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[19]=="O"&&this.val[22]=="O"&&this.val[25]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[7]=="O"&&this.val[16]=="O"&&this.val[25]=="O"){
+			secondWin = true;
+		}
+		if(this.val[21]=="O"&&this.val[22]=="X"&&this.val[23]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[20]=="O"&&this.val[23]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[18]=="O"&&this.val[22]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+		else if(this.val[8]=="O"&&this.val[17]=="O"&&this.val[26]=="O"){
+			secondWin = true;
+		}
+
+		if(ans==1){
 			if(this.turno==0){
 				int n=0;
 				while(n==0){
@@ -1224,336 +1586,411 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 					Random randomGenerator = new Random();
 					while(randomInt == 0){
 						randomInt = randomGenerator.nextInt(28);
+						System.out.println(randomInt);
 					}
 					if((randomInt == 1)&&(this.dis1==1)){
 						this.casilla1.setText("O");
+						this.val[0]="O";
 						this.turno=1;
+						this.dis1=0;
 						n+=1;
 					}
 					if((randomInt == 2)&&(this.dis2==1)){
 						this.casilla2.setText("O");
+						this.val[1]="O";
 						this.turno=1;
+						this.dis2=0;
 						n+=1;
 					}
 					if((randomInt == 3)&&(this.dis3==1)){
 						this.casilla3.setText("O");
+						this.val[2]="O";
 						this.turno=1;
+						this.dis3=0;
 						n+=1;
 					}
 					if((randomInt == 4)&&(this.dis4==1)){
 						this.casilla4.setText("O");
+						this.val[3]="O";
 						this.turno=1;
+						this.dis4=0;
 						n+=1;
 					}
 					if((randomInt == 5)&&(this.dis5==1)){
 						this.casilla5.setText("O");
+						this.val[4]="O";
 						this.turno=1;
+						this.dis5=0;
 						n+=1;
 					}
 					if((randomInt == 6)&&(this.dis6==1)){
 						this.casilla6.setText("O");
+						this.val[5]="O";
 						this.turno=1;
+						this.dis6=0;
 						n+=1;
 					}
 					if((randomInt == 7)&&(this.dis7==1)){
 						this.casilla7.setText("O");
+						this.val[6]="O";
 						this.turno=1;
+						this.dis7=0;
 						n+=1;
 					}
 					if((randomInt == 8)&&(this.dis8==1)){
 						this.casilla8.setText("O");
+						this.val[7]="O";
 						this.turno=1;
+						this.dis8=0;
 						n+=1;
 					}
 					if((randomInt == 9)&&(this.dis9==1)){
 						this.casilla9.setText("O");
+						this.val[8]="O";
 						this.turno=1;
+						this.dis9=0;
 						n+=1;
 					}
 					if((randomInt == 10)&&(this.dis10==1)){
 						this.casilla10.setText("O");
+						this.val[9]="O";
 						this.turno=1;
+						this.dis10=0;
 						n+=1;
 					}
 					if((randomInt == 11)&&(this.dis11==1)){
 						this.casilla11.setText("O");
+						this.val[10]="O";
 						this.turno=1;
+						this.dis11=0;
 						n+=1;
 					}
 					if((randomInt == 12)&&(this.dis12==1)){
 						this.casilla12.setText("O");
+						this.val[11]="O";
 						this.turno=1;
+						this.dis12=0;
 						n+=1;
 					}
 					if((randomInt == 13)&&(this.dis13==1)){
 						this.casilla13.setText("O");
+						this.val[12]="O";
 						this.turno=1;
+						this.dis13=0;
 						n+=1;
 					}
 					if((randomInt == 14)&&(this.dis14==1)){
 						this.casilla14.setText("O");
+						this.val[13]="O";
 						this.turno=1;
+						this.dis14=0;
 						n+=1;
 					}
 					if((randomInt == 15)&&(this.dis15==1)){
 						this.casilla15.setText("O");
+						this.val[14]="O";
 						this.turno=1;
+						this.dis15=0;
 						n+=1;
 					}
 					if((randomInt == 16)&&(this.dis16==1)){
 						this.casilla16.setText("O");
+						this.val[15]="O";
 						this.turno=1;
+						this.dis16=0;
 						n+=1;
 					}
 					if((randomInt == 17)&&(this.dis17==1)){
 						this.casilla17.setText("O");
+						this.val[16]="O";
 						this.turno=1;
+						this.dis17=0;
 						n+=1;
 					}
 					if((randomInt == 18)&&(this.dis18==1)){
 						this.casilla18.setText("O");
-						this.turno=1;
+						this.val[17]="O";
+						this.turno=0;
+						this.dis18=1;
 						n+=1;
 					}
 					if((randomInt == 19)&&(this.dis19==1)){
 						this.casilla19.setText("O");
+						this.val[18]="O";
 						this.turno=1;
+						this.dis19=0;
 						n+=1;
 					}
 					if((randomInt == 20)&&(this.dis20==1)){
 						this.casilla20.setText("O");
+						this.val[19]="O";
 						this.turno=1;
+						this.dis20=0;
 						n+=1;
 					}
 					if((randomInt == 21)&&(this.dis21==1)){
 						this.casilla21.setText("O");
+						this.val[20]="O";
 						this.turno=1;
+						this.dis21=0;
 						n+=1;
 					}
 					if((randomInt == 22)&&(this.dis22==1)){
 						this.casilla22.setText("O");
+						this.val[21]="O";
 						this.turno=1;
+						this.dis22=0;
 						n+=1;
 					}
 					if((randomInt == 23)&&(this.dis23==1)){
 						this.casilla23.setText("O");
+						this.val[22]="O";
 						this.turno=1;
+						this.dis23=0;
 						n+=1;
 					}
 					if((randomInt == 24)&&(this.dis24==1)){
 						this.casilla24.setText("O");
+						this.val[23]="O";
 						this.turno=1;
+						this.dis24=0;
 						n+=1;
 					}
 					if((randomInt == 25)&&(this.dis25==1)){
 						this.casilla25.setText("O");
+						this.val[24]="O";
 						this.turno=1;
+						this.dis25=0;
 						n+=1;
 					}
 					if((randomInt == 26)&&(this.dis26==1)){
 						this.casilla26.setText("O");
+						this.val[25]="O";
 						this.turno=1;
+						this.dis26=0;
 						n+=1;
 					}
 					if((randomInt == 27)&&(this.dis27==1)){
 						this.casilla27.setText("O");
+						this.val[26]="O";
 						this.turno=1;
+						this.dis27=0;
 						n+=1;
 					}
 
 				}
-
-
 			}
+		}
 
-			if(firstWin){
-				gameOver = JOptionPane.showConfirmDialog(null, "El Jugador 1(X) ha ganado ¿Jugar otra vez?");
-				if(gameOver==JOptionPane.YES_OPTION){
-					this.val = new String[27];
-					this.casilla1.setText("");
-					this.dis1=1;
-					this.casilla2.setText("");
-					this.dis2=1;
+		if(firstWin){
+			gameOver = JOptionPane.showConfirmDialog(null, "El Jugador 1(X) ha ganado ¿Jugar otra vez?");
+			if(gameOver==JOptionPane.YES_OPTION){
+				this.val = new String[27];
+				this.casilla1.setText("");
+				this.dis1=1;
+				this.casilla2.setText("");
+				this.dis2=1;
 
-					this.casilla2.setText("");
-					this.dis3=1;
+				this.casilla2.setText("");
+				this.dis3=1;
 
-					this.casilla3.setText("");
-					this.dis3=1;
+				this.casilla3.setText("");
+				this.dis3=1;
 
-					this.casilla4.setText("");
-					this.dis4=1;
+				this.casilla4.setText("");
+				this.dis4=1;
 
-					this.casilla5.setText("");
-					this.dis5=1;
+				this.casilla5.setText("");
+				this.dis5=1;
 
-					this.casilla6.setText("");
-					this.dis6=1;
+				this.casilla6.setText("");
+				this.dis6=1;
 
-					this.casilla7.setText("");
-					this.dis7=1;
+				this.casilla7.setText("");
+				this.dis7=1;
 
-					this.casilla8.setText("");
-					this.dis8=1;
+				this.casilla8.setText("");
+				this.dis8=1;
 
-					this.casilla9.setText("");
-					this.dis9=1;
+				this.casilla9.setText("");
+				this.dis9=1;
 
-					this.casilla10.setText("");
-					this.dis10=1;
+				this.casilla10.setText("");
+				this.dis10=1;
 
-					this.casilla11.setText("");
-					this.dis11=1;
+				this.casilla11.setText("");
+				this.dis11=1;
 
-					this.casilla12.setText("");
-					this.dis12=1;
+				this.casilla12.setText("");
+				this.dis12=1;
 
-					this.casilla13.setText("");
-					this.dis13=1;
+				this.casilla13.setText("");
+				this.dis13=1;
 
-					this.casilla14.setText("");
-					this.dis14=1;
+				this.casilla14.setText("");
+				this.dis14=1;
 
-					this.casilla15.setText("");
-					this.dis15=1;
+				this.casilla15.setText("");
+				this.dis15=1;
 
-					this.casilla16.setText("");
-					this.dis16=1;
+				this.casilla16.setText("");
+				this.dis16=1;
 
-					this.casilla17.setText("");
-					this.dis17=1;
+				this.casilla17.setText("");
+				this.dis17=1;
 
-					this.casilla18.setText("");
-					this.dis18=1;
+				this.casilla18.setText("");
+				this.dis18=1;
 
-					this.casilla19.setText("");
-					this.dis19=1;
+				this.casilla19.setText("");
+				this.dis19=1;
 
-					this.casilla20.setText("");
-					this.dis20=1;
+				this.casilla20.setText("");
+				this.dis20=1;
 
-					this.casilla21.setText("");
-					this.dis21=1;
+				this.casilla21.setText("");
+				this.dis21=1;
 
-					this.casilla23.setText("");
-					this.dis23=1;
+				this.casilla22.setText("");
+				this.dis22=1;
 
-					this.casilla24.setText("");
-					this.dis24=1;
+				this.casilla23.setText("");
+				this.dis23=1;
 
-					this.casilla25.setText("");
-					this.dis25=1;
+				this.casilla24.setText("");
+				this.dis24=1;
 
-					this.casilla26.setText("");
-					this.dis26=1;
+				this.casilla25.setText("");
+				this.dis25=1;
 
-					this.casilla27.setText("");
-					this.dis27=1;
+				this.casilla26.setText("");
+				this.dis26=1;
 
-					this.turno=1;
-					firstWin=false;
-					secondWin=false;
-				}
-				else{
-					System.exit(0);
+				this.casilla27.setText("");
+				this.dis27=1;
+
+				this.turno=1;
+				firstWin=false;
+				secondWin=false;
+				try {
+					output.write(1);
+					System.out.println("Se envio 1");
+				} catch (IOException e1) {
+					System.out.println(e1);
+					e1.printStackTrace();
 				}
 			}
-			else if(secondWin){
-				gameOver = JOptionPane.showConfirmDialog(null, "El Jugador 2(O) ha ganado ¿Jugar otra vez?");
-				if(gameOver==JOptionPane.YES_OPTION){
-					this.val = new String[27];
-					this.casilla1.setText("");
-					this.dis1=1;
-
-					this.casilla2.setText("");
-					this.dis2=1;
-
-					this.casilla2.setText("");
-					this.dis3=1;
-
-					this.casilla3.setText("");
-					this.dis3=1;
-
-					this.casilla4.setText("");
-					this.dis4=1;
-
-					this.casilla5.setText("");
-					this.dis5=1;
-
-					this.casilla6.setText("");
-					this.dis6=1;
-
-					this.casilla7.setText("");
-					this.dis7=1;
-
-					this.casilla8.setText("");
-					this.dis8=1;
-
-					this.casilla9.setText("");
-					this.dis9=1;
-
-					this.casilla10.setText("");
-					this.dis10=1;
-
-					this.casilla11.setText("");
-					this.dis11=1;
-
-					this.casilla12.setText("");
-					this.dis12=1;
-
-					this.casilla13.setText("");
-					this.dis13=1;
-
-					this.casilla14.setText("");
-					this.dis14=1;
-
-					this.casilla15.setText("");
-					this.dis15=1;
-
-					this.casilla16.setText("");
-					this.dis16=1;
-
-					this.casilla17.setText("");
-					this.dis17=1;
-
-					this.casilla18.setText("");
-					this.dis18=1;
-
-					this.casilla19.setText("");
-					this.dis19=1;
-
-					this.casilla20.setText("");
-					this.dis20=1;
-
-					this.casilla21.setText("");
-					this.dis21=1;
-
-					this.casilla23.setText("");
-					this.dis23=1;
-
-					this.casilla24.setText("");
-					this.dis24=1;
-
-					this.casilla25.setText("");
-					this.dis25=1;
-
-					this.casilla26.setText("");
-					this.dis26=1;
-
-					this.casilla27.setText("");
-					this.dis27=1;
-
-					this.turno=1;
-					firstWin=false;
-					secondWin=false;
-				}
-				else{
-					System.exit(0);
-				}
+			else{
+				System.exit(0);
 			}
 
 		}
+		else if(secondWin){
+			gameOver = JOptionPane.showConfirmDialog(null, "El Jugador 2(O) ha ganado ¿Jugar otra vez?");
+			if(gameOver==JOptionPane.YES_OPTION){
+				this.val = new String[27];
+				this.casilla1.setText("");
+				this.dis1=1;
+
+				this.casilla2.setText("");
+				this.dis2=1;
+
+				this.casilla2.setText("");
+				this.dis3=1;
+
+				this.casilla3.setText("");
+				this.dis3=1;
+
+				this.casilla4.setText("");
+				this.dis4=1;
+
+				this.casilla5.setText("");
+				this.dis5=1;
+
+				this.casilla6.setText("");
+				this.dis6=1;
+
+				this.casilla7.setText("");
+				this.dis7=1;
+
+				this.casilla8.setText("");
+				this.dis8=1;
+
+				this.casilla9.setText("");
+				this.dis9=1;
+
+				this.casilla10.setText("");
+				this.dis10=1;
+
+				this.casilla11.setText("");
+				this.dis11=1;
+
+				this.casilla12.setText("");
+				this.dis12=1;
+
+				this.casilla13.setText("");
+				this.dis13=1;
+
+				this.casilla14.setText("");
+				this.dis14=1;
+
+				this.casilla15.setText("");
+				this.dis15=1;
+
+				this.casilla16.setText("");
+				this.dis16=1;
+
+				this.casilla17.setText("");
+				this.dis17=1;
+
+				this.casilla18.setText("");
+				this.dis18=1;
+
+				this.casilla19.setText("");
+				this.dis19=1;
+
+				this.casilla20.setText("");
+				this.dis20=1;
+
+				this.casilla21.setText("");
+				this.dis21=1;
+				
+				this.casilla22.setText("");
+				this.dis22=1;
+
+				this.casilla23.setText("");
+				this.dis23=1;
+
+				this.casilla24.setText("");
+				this.dis24=1;
+
+				this.casilla25.setText("");
+				this.dis25=1;
+
+				this.casilla26.setText("");
+				this.dis26=1;
+
+				this.casilla27.setText("");
+				this.dis27=1;
+
+				this.turno=1;
+				firstWin=false;
+				secondWin=false;
+				try {
+					output.write(1);
+					System.out.println("Se envio 1");
+				} catch (IOException e1) {
+					System.out.println(e1);
+					e1.printStackTrace();
+				}
+			}
+			else{
+				System.exit(0);
+			}
+		}
 	}
+
+
 
 	@Override
 	public void serialEvent(SerialPortEvent arg0) {
@@ -1572,6 +2009,6 @@ public class PanelGato extends JPanel implements SerialPortEventListener, Action
 				//System.err.println("error en serialEvent: "+e);
 			}
 		}
-		
+
 	}
 } 	
